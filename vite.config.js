@@ -25,7 +25,25 @@ export default defineConfig({
         },
         cors: {
             // origin: "*",
-            origin: ["http://192.168.33.11:8085", "http://10.10.5.202:8085"],
+            // origin: ["http://192.168.33.11:8085", "http://10.10.5.202:8085", "http://192.168.33.11:8014"],
+            origin: [
+                "http://192.168.33.11:8000", //maam monding
+                "http://192.168.33.11:8001", //carpark
+                "http://192.168.33.11:8002", //diamond
+                "http://192.168.33.11:8003", //studentportal-e-security-carpark
+                "http://192.168.33.11:8004", // studentportal e-sec-maingate
+                "http://192.168.33.11:8005", //esec-student-STBuilding
+                "http://192.168.33.11:8006", //eSec-UGS
+                "http://192.168.33.11:8007", //VDT-eSec
+                "http://192.168.33.11:8008", //dtRMaingate
+                "http://192.168.33.11:8009", //dtrST
+                "http://192.168.33.11:8010", //dtrGradeSchool
+                "http://192.168.33.11:8011", //dtRVDT
+                "http://192.168.33.11:8012", // reserve
+                "http://192.168.33.11:8013",  //reserve
+                "http://192.168.33.11:8014", //reserve
+                "http://192.168.33.11:8015", //reserve
+            ],
             methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
             allowedHeaders: ["Content-Type", "Authorization"],
         },

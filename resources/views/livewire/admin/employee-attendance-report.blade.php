@@ -88,11 +88,11 @@
                             </p>
                         @else
                             <div class="flex justify-start">
-                                <div class="mr-5">
+                                <div>
                                     <label for="endDate" class="text-gray-600">Select Month of:</label>
                                     <select wire:model="selectedMonth" id="selectedMonth" name="selectedMonth"
                                             wire:change="updateMonth"
-                                            class="mr-5 cursor-pointer text-sm shadow appearance-none border pr-16 rounded py-2 px-2 text-black leading-tight focus:outline-none focus:shadow-outline md:w-auto"
+                                            class="mr-2 cursor-pointer tracking-widest text-sm shadow appearance-none border pr-16 rounded py-2 px-2 text-black leading-tight focus:outline-none focus:shadow-outline md:w-auto"
                                             required>
                                         <option value="">-- Select Month --</option>
                                         @foreach($months as $key => $monthName)
@@ -100,13 +100,26 @@
                                         @endforeach
                                     </select>
                                 </div>
+                                <div>
+                                    <label for="selectedYear" class="text-gray-600"> Year:</label>
+                                    <select wire:model="selectedYear" id="selectedYear" name="selectedYear"
+                                            wire:change="updateYear"
+                                            class="mr-5 cursor-pointer text-sm tracking-widest shadow appearance-none border pr-16 rounded py-2 px-2 text-black leading-tight focus:outline-none focus:shadow-outline md:w-auto"
+                                            required>
+                                        <option value="">-- Select Year --</option>
+                                        @foreach($years as $year)
+                                            <option value="{{ $year }}" {{ $selectedYear == $year ? 'selected' : '' }}>{{ $year }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                
                                 <div class="flex items-center space-x-4">
                                     <!-- Start Day Dropdown -->
                                         
                                     <label for="startDate" class="text-gray-600">Start Day:</label>
                                     <select 
                                         id="startDate" 
-                                        class="w-40 border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                                        class="tracking-widest w-40 border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                                         wire:model="startDate"
                                         wire:change="updateAttendanceByDateRange"
                                     >
@@ -120,7 +133,7 @@
                                     <label for="endDate" class=" text-gray-600">End Day:</label>
                                     <select 
                                         id="endDate" 
-                                        class=" w-40 border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                                        class="tracking-widest w-40 border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                                         wire:model="endDate"
                                         wire:change="updateAttendanceByDateRange"
                                         
@@ -142,6 +155,7 @@
                                     </div>
                                     
                                 </div>
+                                
                                 <div x-data="{ open: false }" @keydown.window.escape="open = false" x-cloak>
                                     <!-- Modal Trigger Button -->
                                     <button @click="open = true" class="bg-blue-500 hover:bg-blue-700 text-white py-1 px-2 rounded ml-2"><i class="fa-solid fa-calendar-days"></i> Click to view Working Hour</button>
@@ -233,7 +247,7 @@
                                         
                                         <div class="flex justify-start">
                                             <p class="mt-4">Selected Date Range: &nbsp;</p>
-                                            <p class="py-4 text-red-500 uppercase font-bold" style="color:red">
+                                            <p class="py-4 text-red-500 uppercase tracking-widest font-bold" style="color:red">
                                                 {{ \Carbon\Carbon::createFromFormat('m', str_pad($this->selectedMonth, 2, '0', STR_PAD_LEFT))->format('F') }} {{ $startDate}} to {{ $endDate }}, {{$this->selectedYear}}
                                             </p>
                                             
@@ -264,8 +278,8 @@
                                                 </p>
                                                 
                                             @else
-                                                <p class="py-4 text-red-500 uppercase font-bold ">
-                                                    {{ \Carbon\Carbon::createFromFormat('m', str_pad($this->selectedMonth, 2, '0', STR_PAD_LEFT))->format('F') }} 
+                                                <p class="py-4 text-red-500 uppercase font-bold tracking-widest">
+                                                    {{ \Carbon\Carbon::createFromFormat('m', str_pad($this->selectedMonth, 2, '0', STR_PAD_LEFT))->format('F') }}, {{ $this->selectedYear }} 
                                                 </p>
                                                 @empty($employees)
                                                     
@@ -280,6 +294,14 @@
                                                         </div>
                                                     </div>
                                                     <div wire:loading wire:target="generateExcelPayroll" class="fixed inset-0 flex justify-center items-center bg-gray-500 bg-opacity-50 z-50">
+                                                        <div class="h-full flex mx-auto justify-center items-center space-x-2 bg-opacity-50 p-6 rounded shadow-lg">
+                                                            <div class="flex flex-col items-center">
+                                                                <div class="w-8 h-8 border-4 border-t-transparent border-blue-500 rounded-full animate-spin"></div>
+                                                                <span class="text-center mt-3 text-white">Processing Export of Excel file...</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div wire:loading wire:target="selectedYear" class="fixed inset-0 flex justify-center items-center bg-gray-500 bg-opacity-50 z-50">
                                                         <div class="h-full flex mx-auto justify-center items-center space-x-2 bg-opacity-50 p-6 rounded shadow-lg">
                                                             <div class="flex flex-col items-center">
                                                                 <div class="w-8 h-8 border-4 border-t-transparent border-blue-500 rounded-full animate-spin"></div>
@@ -353,7 +375,7 @@
                                         <div class="flex justify-between">
                                             <div class="w-[49%]">
                                                 <div class="flex justify-center mb-2 mt-2">
-                                                    <h3 class="text-center font-bold">TIME IN RECORDS <span class="font-normal"> (AM & PM IN)</span></h3>
+                                                    <h3 class="text-center font-bold tracking-widest">TIME IN RECORDS <span class="font-normal"> (AM & PM IN)</span></h3>
                                                 </div>
                                                 <!-- Assuming $attendanceTimeIn is sorted by check_in_time descending -->
                                                 @if ($attendanceTimeIn->isNotEmpty())
@@ -445,7 +467,7 @@
                                             
                                             <div class="w-[49%]">
                                                 <div class="flex justify-center mb-2 mt-2">
-                                                    <h3 class="text-center font-bold">TIME OUT RECORDS <span class="font-normal"> (AM & PM OUT)</span></h3>
+                                                    <h3 class="text-center font-bold tracking-widest">TIME OUT RECORDS <span class="font-normal"> (AM & PM OUT)</span></h3>
                                                 </div>
                                                 @if ($attendanceTimeOut->isNotEmpty())
                                                     @php

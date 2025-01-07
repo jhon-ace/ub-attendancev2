@@ -190,16 +190,16 @@
 <div class="logo-background" id="logoBackground"></div> 
     <div class="flex flex-wrap items-center justify-center gap-10 p-2 w-full">
         <!-- Left Table (Time-In List) -->
-        <div class="table-container shadow-xl w-[390px] p-1" id="timeInContainer">
+        <div class="table-container shadow-xl w-[343.5px] p-1" id="timeInContainer">
             <h2 class="font-bold text-2xl text-black uppercase mb-2 mt-4 tracking-widest text-center">Time - In List</h2>
             
             <div class="overflow-x-auto">
-                <p class="uppercase">(AM/PM IN)</p>
-                <table class="w-[366px] table-fixed border-collapse">
+                <p class="uppercase">(AM / PM IN)</p>
+                <table class="w-[320px] table-fixed border-collapse">
                     <thead>
                         <tr>
-                            <th class="uppercase text-sm text-center tracking-widest w-[190px]">Employee Name</th>
-                            <th class="uppercase text-sm text-center tracking-widest w-[190px]">MM - DD :: TIME</th>
+                            <th class="uppercase text-xs text-center tracking-widest w-[155px]">Employee Name</th>
+                            <th class="uppercase text-xs text-center tracking-widest w-[178px]">MM - DD :: TIME</th>
                         </tr>
                     </thead>
                     <tbody id="timeInTable"></tbody>
@@ -230,15 +230,15 @@
 
 
         <!-- Right Table (Time-Out List) -->
-        <div class="table-container shadow-xl w-[390px] p-1">
+        <div class="table-container shadow-xl w-[343.5px] p-1">
             <h2 class="font-bold text-2xl text-black uppercase mb-2 mt-4 tracking-widest text-center">Time - Out List</h2>
             <div class="overflow-x-auto">
-                <p class="uppercase">(AM/PM OUT)</p>
-                <table class="w-[366px] table-fixed border-collapse">
+                <p class="uppercase">(AM / PM OUT)</p>
+                <table class="w-[320px] table-fixed border-collapse">
                     <thead>
                         <tr>
-                            <th class="uppercase text-sm text-center tracking-widest w-[190px]">Employee Name</th>
-                            <th class="uppercase text-sm text-center tracking-widest w-[190px]">MM - DD :: TIME</th>
+                            <th class="uppercase text-xs text-center tracking-widest w-[155px]">Employee Name</th>
+                            <th class="uppercase text-xs text-center tracking-widest w-[178px]">MM - DD :: TIME</th>
                         </tr>
                     </thead>
                     <tbody id="timeOutTable"></tbody>
@@ -472,10 +472,10 @@
 
                         timeInTable.innerHTML += `
                             <tr>
-                                <td class="text-left text-black text-sm uppercase tracking-widest truncate overflow-hidden whitespace-nowrap max-w-[184.5px]">
+                                <td class="text-left text-black text-xs font-semibold uppercase tracking-widest truncate overflow-hidden whitespace-nowrap max-w-[150.5px]">
                                     ${EmployeeName}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                 </td>
-                                <td class="text-center text-black text-sm uppercase tracking-widest ">${checkInTime}</td>
+                                <td class="text-center text-black text-xs font-semibold uppercase tracking-widest ">&nbsp;${checkInTime}</td>
                             </tr>
                         `;
 
@@ -510,10 +510,10 @@
 
                         timeOutTable.innerHTML += `
                             <tr>
-                                <td class="text-left text-black text-sm uppercase tracking-widest truncate overflow-hidden whitespace-nowrap max-w-[184.5px]">
+                                <td class="text-left text-black text-xs font-semibold uppercase tracking-widest truncate overflow-hidden whitespace-nowrap max-w-[150.5px]">
                                     ${EmployeeName}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                 </td>
-                                <td class="text-center text-black text-sm uppercase tracking-widest">${checkOutTime}</td>
+                                <td class="text-center text-black text-xs font-semibold uppercase tracking-widest">${checkOutTime}</td>
                             </tr>
                         `;
                     });
@@ -661,7 +661,7 @@
                             <div class="flex items-center justify-center z-50 pl-3 pr-3">
                                 <img src="{{ asset('assets/img/logo.png') }}" 
                                     alt="Logo" 
-                                    class="w-[400px] h-[400px] object-cover rounded-full  shadow-lg" 
+                                    class="w-[300px] h-[300px] object-cover rounded-full  shadow-lg" 
                                     loading="lazy">
                             </div>
                         `;
@@ -690,7 +690,7 @@
                                 <div class="flex flex-col items-center justify-center z-50 pl-3 pr-3">
                                     <img src="${profileImager}" 
                                         alt="Profile Image" 
-                                        class="w-[400px] h-[400px] object-cover rounded-full" 
+                                        class="w-[300px] h-[300px] object-cover rounded-full" 
                                         loading="lazy">
                                     <h1 class="text-xl text-white font-semibold mt-4 tracking-wider text-left">Name: ${name}</h1>  <!-- mt-4 adds margin-top for spacing between image and text -->
                                     <h1 class="text-xl text-white font-semibold mt-1 tracking-wider text-left">Department: ${department}</h1>  <!-- mt-1 adds margin-top for spacing between the name and department -->
@@ -703,7 +703,7 @@
                                 <div class="flex items-center justify-center z-50 pl-3 pr-3">
                                     <img src="{{ asset('assets/img/logo.png') }}" 
                                         alt="Logo" 
-                                        class="w-[400px] h-[400px] object-cover rounded-full" 
+                                        class="w-[300px] h-[300px] object-cover rounded-full" 
                                         loading="lazy">
                                 </div>
                             `;
@@ -723,7 +723,7 @@
                             <div class="flex items-center justify-center z-50 pl-3 pr-3">
                                 <img src="{{ asset('assets/img/logo.png') }}" 
                                     alt="Logo" 
-                                    class="w-[400px] h-[400px] object-cover rounded-full" 
+                                    class="w-[300px] h-[300px] object-cover rounded-full" 
                                     loading="lazy">
                             </div>
                         `;
@@ -753,7 +753,7 @@
                                 <div class="flex flex-col items-center justify-center z-50 pl-3 pr-3">
                                     <img src="${profileImager}" 
                                         alt="Profile Image" 
-                                        class="w-[400px] h-[400px] object-cover rounded-full" 
+                                        class="w-[300px] h-[300px] object-cover rounded-full" 
                                         loading="lazy">
                                     <h1 class="text-xl text-white font-semibold mt-4 tracking-wider text-left">Name: ${name}</h1>  <!-- mt-4 adds margin-top for spacing between image and text -->
                                     <h1 class="text-xl text-white font-semibold mt-1 tracking-wider text-left">Department: ${department}</h1>  <!-- mt-1 adds margin-top for spacing between the name and department -->
@@ -764,7 +764,7 @@
                                 <div class="flex items-center justify-center z-50 pl-3 pr-3">
                                     <img src="{{ asset('assets/img/logo.png') }}" 
                                         alt="Logo" 
-                                        class="w-[400px] h-[400px] object-cover rounded-full" 
+                                        class="w-[300px] h-[300px] object-cover rounded-full" 
                                         loading="lazy">
                                 </div>
                             `;
@@ -797,7 +797,7 @@
 
         }
 
-        setInterval(fetchAttendanceData, 1000);
+        // setInterval(fetchAttendanceData, 1000);
 
         // Fetch initial attendance data on page load
         document.addEventListener('DOMContentLoaded', fetchAttendanceData);
