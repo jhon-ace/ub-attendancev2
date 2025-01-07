@@ -1861,7 +1861,7 @@ class DisplayDataforPayroll extends Component
         $departments = Department::where('id', $this->selectedDepartment4)->get();
         $department = Department::find($this->selectedDepartment4);
 
-            $currentYear = Carbon::now()->year;
+            $currentYear = $this->selectedYear;
             $currentMonth = Carbon::now()->month;
         try {
 
@@ -1935,7 +1935,7 @@ class DisplayDataforPayroll extends Component
 
             // Apply selected employee filter
              $currentMonth = $this->selectedMonth;  // Get the current month
-            $currentYear = now()->year;  
+            $currentYear = $this->selectedYear;  
 
             // Apply date range filter if both dates are set
             if ($this->startDate && $this->endDate) {
