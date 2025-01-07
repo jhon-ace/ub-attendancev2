@@ -3385,17 +3385,31 @@
                             </p>
                         @else
                             <div class="flex justify-end">
-                                <div class="-mr-5">
-                                    <label for="endDate" class="text-gray-600">Select Month of:</label>
-                                    <select wire:model="selectedMonth" id="selectedMonth" name="selectedMonth"
-                                            wire:change="updateMonth"
-                                            class="mr-5 cursor-pointer text-sm shadow appearance-none border pr-16 rounded py-2 px-2 text-black leading-tight focus:outline-none focus:shadow-outline md:w-auto"
-                                            required>
-                                        <option value="">-- Select Month --</option>
-                                        @foreach($months as $key => $monthName)
-                                            <option value="{{ $key }}" {{ $selectedMonth == $key ? 'selected' : '' }}>{{ $monthName }}</option>
-                                        @endforeach
-                                    </select>
+                                <div class="flex justify-start -mr-5">
+                                    <div>
+                                        <label for="endDate" class="text-gray-600">Select Month of:</label>
+                                        <select wire:model="selectedMonth" id="selectedMonth" name="selectedMonth"
+                                                wire:change="updateMonth"
+                                                class="mr-5 cursor-pointer text-sm shadow appearance-none border pr-16 rounded py-2 px-2 text-black leading-tight focus:outline-none focus:shadow-outline md:w-auto"
+                                                required>
+                                            <option value="">-- Select Month --</option>
+                                            @foreach($months as $key => $monthName)
+                                                <option value="{{ $key }}" {{ $selectedMonth == $key ? 'selected' : '' }}>{{ $monthName }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label for="selectedYear" class="text-gray-600">Year:</label>
+                                        <select wire:model="selectedYear" id="selectedYear" name="selectedYear"
+                                                wire:change="updateYear"
+                                                class="mr-5 cursor-pointer text-sm shadow appearance-none border pr-16 rounded py-2 px-2 text-black leading-tight focus:outline-none focus:shadow-outline md:w-auto"
+                                                required>
+                                            <option value="">-- Select Year --</option>
+                                            @foreach($years as $year)
+                                                <option value="{{ $year }}" {{ $selectedYear == $year ? 'selected' : '' }}>{{ $year }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
                                 </div> 
                             </div>
                             <div class="flex justify-between mt-1 mb-2">
@@ -3407,6 +3421,14 @@
                                 <div class="flex justify-end">
                                     <div class="grid grid-rows-1 grid-flow-col ">
                                         <div wire:loading wire:target="selectedMonth" class="fixed inset-0 flex justify-center items-center bg-gray-500 bg-opacity-50 z-50">
+                                            <div class="h-full flex mx-auto justify-center items-center space-x-2  bg-opacity-50 p-6 rounded shadow-lg">
+                                                <div class="flex flex-col items-center">
+                                                    <div class="w-8 h-8 border-4 border-t-transparent border-blue-500 rounded-full animate-spin"></div>
+                                                    <span class="text-center mt-3 text-white">Fetching data...</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div wire:loading wire:target="selectedYear" class="fixed inset-0 flex justify-center items-center bg-gray-500 bg-opacity-50 z-50">
                                             <div class="h-full flex mx-auto justify-center items-center space-x-2  bg-opacity-50 p-6 rounded shadow-lg">
                                                 <div class="flex flex-col items-center">
                                                     <div class="w-8 h-8 border-4 border-t-transparent border-blue-500 rounded-full animate-spin"></div>
