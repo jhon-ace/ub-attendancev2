@@ -71,10 +71,10 @@
 
     @if($startDate && $endDate)
         <p class="text-center font-bold">
-            Selected Date: {{ \Carbon\Carbon::createFromFormat('m', str_pad($currentMonths, 2, '0', STR_PAD_LEFT))->format('F') }} {{$startDate}} to {{ $endDate }}
+            Selected Date: {{ \Carbon\Carbon::createFromFormat('m', str_pad($currentMonths, 2, '0', STR_PAD_LEFT))->format('F') }} {{$startDate}} to {{ $endDate }}, {{ $currentYears }}
         </p>
     @else
-        <p style="text-transform:uppercase;font-weight:bold">MONTH: {{ \Carbon\Carbon::createFromFormat('m', str_pad($currentMonths, 2, '0', STR_PAD_LEFT))->format('F') }}</p>
+        <p style="text-transform:uppercase;font-weight:bold">MONTH: {{ \Carbon\Carbon::createFromFormat('m', str_pad($currentMonths, 2, '0', STR_PAD_LEFT))->format('F') }}, {{ $currentYears }}</p>
     @endif
 
     <table class="border border-black h-full" cellpadding="2">

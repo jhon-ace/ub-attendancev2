@@ -2928,8 +2928,8 @@ class DisplayDataforPayroll extends Component
         $departments = Department::where('id', $this->selectedDepartment4)->get();
         $department = Department::find($this->selectedDepartment4);
 
-            $currentYear = Carbon::now()->year;
-            $currentMonth = $this->selectedYear;
+            $currentYear = $this->selectedYear;
+            $currentMonth = $this->selectedMonth;
             
            $fullStartDate = Carbon::createFromFormat('m', $this->selectedMonth)->format('F') . " {$this->startDate}";
             $fullEndDate = Carbon::createFromFormat('m', $this->selectedMonth)->format('F') . " {$this->endDate}, {$currentYear}";
@@ -2988,7 +2988,7 @@ class DisplayDataforPayroll extends Component
             // }
 
              $currentMonth = $this->selectedMonth;  // Get the current month
-            $currentYear = now()->year;  
+            $currentYear = $this->selectedYear;  
 
             // Apply date range filter if both dates are set
             if ($this->startDate && $this->endDate) {
@@ -3917,10 +3917,13 @@ class DisplayDataforPayroll extends Component
                     }
                 }
             }
+            
             $currentMonths = $this->selectedMonth;
+            $currentYears = $this->selectedYear;
+
             $this->dispatch('export-success');
             session()->flash('success', 'Attendance Report downloaded successfully!');
-            $export = new AttendanceExportForPayroll($attendanceData, $currentMonths);
+            $export = new AttendanceExportForPayroll($attendanceData, $currentMonths, $currentYears);
 
             return Excel::download($export, $filename);
 

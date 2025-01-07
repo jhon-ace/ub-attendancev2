@@ -14,11 +14,13 @@ class AttendanceExportForPayroll implements FromView, WithColumnWidths, WithStyl
 {
     protected $attendanceData;
     public $currentMonths;
+    public $currentYears;
 
-    public function __construct($attendanceData, $currentMonths)
+    public function __construct($attendanceData, $currentMonths, $currentYears)
     {
         $this->attendanceData = $attendanceData;
         $this->currentMonths = $currentMonths;
+        $this->currentYears = $currentYears;
     }
 
     public function view(): View
@@ -26,6 +28,7 @@ class AttendanceExportForPayroll implements FromView, WithColumnWidths, WithStyl
         return view('exports.attendance_report_payroll', [
             'attendanceData' => $this->attendanceData,
             'currentMonths' => $this->currentMonths,
+            'currentYears' => $this->currentYears,
             
         ]);
     }
