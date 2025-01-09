@@ -31,8 +31,11 @@ class ShowEmployeeTable extends Component
 
     public function mount()
     {
+
         if (Auth::check() && Auth::user()->school) {
             $this->selectedSchool = Auth::user()->school->id;
+        } else {
+            $this->selectedSchool = 1;
         }
         $this->selectedDepartment2 = session('selectedDepartment2', null);
         $this->departmentsToShow = collect([]); // Initialize as an empty collection

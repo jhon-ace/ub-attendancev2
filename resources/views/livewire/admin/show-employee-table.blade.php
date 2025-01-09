@@ -24,21 +24,9 @@
         @endif
         </div>
         <div class="flex flex-column overflow-x-auto -mb-5">
-            <div class="col-span-3 pt-4">
-                <label for="school_id" class="block text-sm text-gray-700 font-bold md:mr-4 truncate uppercase">School Name:</label>
-                <select wire:model="selectedSchool" id="school_id" name="school_id" wire:change="updateEmployees"
-                        class="cursor-pointer text-sm shadow appearance-none border pr-16 rounded py-2 px-2 text-black leading-tight focus:outline-none focus:shadow-outline @error('school_id') is-invalid @enderror md:w-auto"
-                        required>
-                    <option value="">Select School Name</option>
-                    @foreach($schools as $school)
-                        <option value="{{ $school->id }}">{{ $school->abbreviation }}</option>
-                    @endforeach
-                </select>
-                @if($schoolToShow)
-                    <p class="text-black mt-2 text-sm mb-1 ">Selected School Name: <span class="text-red-500 ml-2">{{ $schoolToShow->abbreviation }}</span></p>
-                    <!-- <p class="text-black  text-sm ml-4">Selected School: <span class="text-red-500 ml-2">{{ $schoolToShow->school_name }}</span></p> -->
-                @endif
-            </div>
+            @if($schoolToShow)
+                    <p class="w-64 text-black mt-10 text-sm mb-1">School: <span class="text-red-500 ml-2 font-bold uppercase">{{ $schoolToShow->abbreviation }}</span></p>
+            @endif
 
             <div class="col-span-1 p-4">
                 @if(!empty($selectedSchool))
