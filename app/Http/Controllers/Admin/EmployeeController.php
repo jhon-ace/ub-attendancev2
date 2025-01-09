@@ -209,16 +209,19 @@ class EmployeeController extends Controller
             $employee->save();
 
 
-            if (Auth::user()->hasRole('admin')) {
-                
-                return redirect()->route('admin.employee.index')
-                ->with('success', 'Employee updated successfully.');
+            if(Auth::check())
+                if (Auth::user()->hasRole('admin')) {
+                        
+                    return back()->with('success', 'Employee updated successfully.');
 
-            } else {
+                } else if (Auth::user()->hasRole('admin_staff')) {
+                    return redirect()->route('admin_staff.employee.index')
+                    ->with('success', 'Employee updated successfully.');
 
+                }
+            {
                 return redirect()->route('admin_staff.employee.index')
-                ->with('success', 'Employee updated successfully.');
-
+                    ->with('success', 'Unauthorized Access!');
             }
 
         } else {

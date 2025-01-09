@@ -1964,7 +1964,8 @@
         return false; 
     }
 </script>
-<script src="{{asset('assets/js/jquery-3.6.0.min.js')}}" defer></script>
+<!-- <script src="{{asset('assets/js/jquery-3.6.0.min.js')}}" defer></script> -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     function previewImage(event) {
         var reader = new FileReader();
