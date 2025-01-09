@@ -1,4 +1,5 @@
 <x-app-layout>
+    <x-user-route-page-name :routeName="'employee.dashboard'" />
     <div class="transition-all duration-300 min-h-screen flex flex-col flex-auto flex-shrink-0 antialiased bg-gradient-to-r from-yellow-400 to-red-500 text-black dark:text-white">
         <div id="dashboardContent" class="h-full ml-14  md:ml-48 transition-all duration-300">
             <div class="max-w-full mx-auto">
