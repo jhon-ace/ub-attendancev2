@@ -391,9 +391,14 @@ class EmployeeController extends Controller
         $employee_id = strtoupper($request->employee_id);
         $employee_lastname = strtoupper($request->employee_lastname);
 
+    
         $employee = Employee::where('employee_id', $employee_id)
                             ->where('employee_lastname', $employee_lastname)
                             ->first();
+
+        $password_status = $employee->password_change;
+
+        
 
         
 
@@ -409,6 +414,11 @@ class EmployeeController extends Controller
 
         $request->session()->regenerate();
         
+        if($password_status === 0) 
+        {
+            return redirect()->route('employee.change.credentials');
+        }
+
          $uri = '/employee/dashboard';
         $hashedUri = hash('md5', $uri);
 
@@ -428,14 +438,19 @@ class EmployeeController extends Controller
         return redirect()->route('employee.login.portal'); // Ensure proper redirection to the login page
     }
 
-
-
-
     public function employee_dashboard()
     {
         if (Auth::user()->hasRole('employee')) {
            return view('Admin.employee.dashboard');
         }         
     }
+
+    public function employee_change_credentials()
+    {
+            return view('Admin.employee.change_pass');
+    }
+
+
+
 
 }

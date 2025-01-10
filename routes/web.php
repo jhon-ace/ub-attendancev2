@@ -297,6 +297,7 @@ Route::middleware(['auth:web'])->group(function () {
 
 Route::middleware(['auth:employee', 'role:employee'])->group(function () {
     Route::get('/sdcs', [EmployeeController::class, 'employee_dashboard'])->name('employee.dashboard');
+    Route::get('/employee/change-credentials', [EmployeeController::class, 'employee_change_credentials'])->name('employee.change.credentials');
     Route::post('/employee/logout', [EmployeeController::class, 'logoutEmployee'])->name('logout.employee');
 });
 
