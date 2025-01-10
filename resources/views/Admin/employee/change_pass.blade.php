@@ -1,122 +1,57 @@
-<!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-<head>
-    <meta charset="utf-8">
-    <link rel="icon" type="image/x-icon" href="{{ asset('assets/img/logo.png') }}">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Employee Change Credentials</title>
-    <!-- Fonts -->
-    <!-- Styles -->
-    <style>
-        .logo-background {
-            background-image: url('{{ asset('assets/img/bg.jpg') }}');
-            background-size: cover;
-            background-repeat: no-repeat;
-            background-position: center center;
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1; /* Ensure it's behind other content */
-            opacity: .9; /* Adjust opacity as needed */
-        }
-
-        .container {
-            max-width: 1200px; /* Adjust as needed */
-            margin: 0 auto; /* Center the container */
-            padding: 0 1rem; /* Add padding to the left and right */
-            min-height: 100vh; /* Ensure full viewport height */
-            display: flex;
-            flex-direction: column;
-        }
-
-        .form-section {
-            padding: 2rem;
-            background: rgba(255, 255, 255, 0.85);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
-            width: 100%;
-            max-width: 400px; /* Adjust width as needed */
-            margin-top:50px;/* Center the form horizontally and add top and bottom margin */
-        }
-
-        .text-section {
-            display:flex;
-            justify-content: center;
-            padding: 1rem;
-            background: rgba(255, 255, 255, 0.8);
-            color: #333;
-            font-size: 1.5rem;
-            text-align: center;
-            width: 100%;
-            max-width: 1000px; /* Adjust width as needed */
-            margin-top: auto; /* Push text section to the bottom */
-        }
-
-        .motto {
-            font-size: 1.5rem;
-            font-weight: bold;
-        }
-    </style>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-</head>
-<body class="font-sans antialiased ">
-<div class="relative min-h-screen">
-    <div class="logo-background"></div> 
-    <div class="container">
-
-        <div class="form-section mx-auto mt-16">
-
-            <x-auth-session-status class="mb-4" :status="session('status')" />
-
-            <form method="POST" action="{{ route('employee_login') }}">
-                @csrf
-
-                <img src="{{ asset('assets/img/logo.png')}}" alt="" class="w-24 mx-auto mb-4">
-                <h4 class="text-center mb-10 text-lg uppercase tracking-widest">Add Credentials</h4>
-
-                <div class="mb-4">
-                    <x-input-label for="employee_id" :value="__('Enter Username')" />
-                    <x-text-input id="employee_id" class="block w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:focus:ring-offset-gray-800"
-                                  type="text"
-                                  name="employee_id"
-                                  required
-                                  autofocus
-                                  autocomplete="employee_id" />
-                    <x-input-error :messages="$errors->get('employee_id')" class="mt-2" />
+<x-app-layout>
+    <x-user-route-page-name :routeName="'employee.change.credentials'" />
+    <div class="transition-all duration-300 min-h-screen flex flex-col flex-auto flex-shrink-0 antialiased bg-gradient-to-r from-yellow-400 to-red-500 text-black dark:text-white">
+        <div id="dashboardContent" class="h-full ml-14  md:ml-48 transition-all duration-300">
+            <div class="max-w-full mx-auto">
+                <div x-data="{ isFullScreen: (window.innerHeight === screen.height) }" x-init="
+                        window.addEventListener('resize', () => {
+                            isFullScreen = (window.innerHeight === screen.height);
+                        });
+                    " x-show="!isFullScreen" class="flex w-full p-2 bg-gradient-to-r from-yellow-800 to-orange-800 justify-between">
+                    <div class="ml-2 mt-0.5 font-semibold text-xs tracking-wide text-white uppercase sm:text-sm md:text-md lg:text-md xl:text-md">
+                        <button id="toggleButton" class="text-white mr-0 px-3 py-1 rounded-md border border-transparent hover:border-blue-500">
+                            <i id="toggleIcon" class="fa-solid fa-bars" style="color: #ffffff;"></i>
+                        </button>
+                        <span>{{ Auth::guard('employee')->user()->school->school_name }}</span>
+                    </div>
+                    <div x-cloak class="relative" x-data="{ open: false }">
+                        <div @click="open = !open" class="mr-5 cursor-pointer">
+                            <i class="fa-solid fa-user-gear px-3 py-2 rounded-md border border-transparent hover:border-blue-500" style="color: #ffffff;"></i>
+                        </div>
+                        <div x-show="open" @click.away="open = false" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-2 z-20">
+                            
+                            <form method="POST" action="{{ route('logout.employee') }}">
+                                @csrf
+                                <a href="{{ route('logout.employee') }}"
+                                onclick="event.preventDefault(); this.closest('form').submit();"
+                                class="block px-4 py-2 text-gray-800 hover:bg-gray-200">
+                                <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout
+                                </a>
+                            </form>
+                        </div>
+                    </div>
                 </div>
-    
-                <div class="mb-4">
-                    <x-input-label for="employee_lastname" :value="__('Enter password')" />
-                    <x-text-input id="employee_lastname" class="block w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:focus:ring-offset-gray-800"
-                                  type="text"
-                                  name="employee_lastname"
-                                  required
-                                  autocomplete="employee_lastname" />
-                    <x-input-error :messages="$errors->get('employee_lastname')" class="mt-2" />
+                <div x-data="{ isFullScreen: (window.innerHeight === screen.height) }" x-init="
+                    window.addEventListener('resize', () => {
+                        isFullScreen = (window.innerHeight === screen.height);
+                    });
+                    " class="rounded-md p-2 sm:p-2 md:p-2 lg:p-2 text-black font-medium">
+                    <div class="relative">
+                        <div class="container shadow-lg p-5 sm:p-6 md:p-7 lg:p-8 bg-white rounded-md text-black font-medium"
+                            :style="{ 'width': isFullScreen ? 'calc(100vw - 16px)' : 'auto', 'margin-left': isFullScreen ? '-192px' : '0' }">
+                            <livewire:admin.employee-change-pass />
+                        </div>
+                    </div>
                 </div>
-    
-                <div class="flex justify-center">
-                    <x-primary-button class="">
-                        {{ __('Log in') }}
-                    </x-primary-button>
-                </div>
-                <div class="flex items-center justify-end " readonly>
-                    @if (Route::has('password.request'))
-                        <a class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800" href="" >
-                            {{ __('Forgot your password?') }}
-                        </a>
-                    @endif
-                </div>
-            </form>
-        </div>
-
-        <!-- Text Section -->
-        <div class="text-section mx-auto">
-            <p class="motto">A premier university transforming lives for a great future.</p>
+            </div>
         </div>
     </div>
-</div>
-</body>
-</html>
+</x-app-layout>
+
+<x-show-hide-sidebar
+    toggleButtonId="toggleButton"
+    sidebarContainerId="sidebarContainer"
+    dashboardContentId="dashboardContent"
+    toggleIconId="toggleIcon"
+    toggleIconIdFullscreen="toggleIcon2"
+/>

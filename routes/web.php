@@ -296,9 +296,11 @@ Route::middleware(['auth:web'])->group(function () {
 });
 
 Route::middleware(['auth:employee', 'role:employee'])->group(function () {
-    Route::get('/sdcs', [EmployeeController::class, 'employee_dashboard'])->name('employee.dashboard');
+    Route::get('/employee/dashboard', [EmployeeController::class, 'employee_dashboard'])->name('employee.dashboard');
     Route::get('/employee/change-credentials', [EmployeeController::class, 'employee_change_credentials'])->name('employee.change.credentials');
+    Route::put('/employee/submit-change-credentials2/{id}', [EmployeeController::class, 'employee_change_credentials_submit'])->name('employee.change.credentials.submit');
     Route::post('/employee/logout', [EmployeeController::class, 'logoutEmployee'])->name('logout.employee');
+    Route::post('/employee/logout/new-credentials', [EmployeeController::class, 'logoutEmployee_new_credentials'])->name('logout.employee_new_credentials');
 });
 
 
@@ -307,6 +309,8 @@ Route::middleware(['auth:employee', 'role:employee'])->group(function () {
                     
                     Route::get('/employee/login', 'employee_login')->name('employee.login.portal');
                     Route::post('/employee/login/store', 'login_employee')->name('employee_login');
+                    Route::get('/employee/login2', 'employee_login_new_credentials')->name('employee.login.portal2');
+                    Route::post('/employee/login/store_new_credentials', 'login_employee_new_credentials')->name('employee_login_new_credentials');
     });
 
 

@@ -4,10 +4,10 @@
     <meta charset="utf-8">
     <link rel="icon" type="image/x-icon" href="{{ asset('assets/img/logo.png') }}">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Attendance System</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <title>Employee Login | Attendance System</title>
     <!-- Fonts -->
     <!-- Styles -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         .logo-background {
             background-image: url('{{ asset('assets/img/bg.jpg') }}');
@@ -63,65 +63,77 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="font-sans antialiased ">
+@if (session('info'))
+        <!-- Modal Background -->
+        <div id="error-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+            <div class="bg-white rounded-lg shadow-lg p-6 w-11/12 md:w-1/3 relative">
+                <!-- Modal Header -->
+                <div class="flex justify-center mb-4">
+                    <h2 class="text-xl font-bold text-red-600">Info</h2>
+                </div>
+                <!-- Modal Body -->
+                <div>
+                    <p class="text-yellow-800 p-2 font-bold text-[20px] tracking-widest">
+                        {{ session('info') }}
+                    </p>
+                </div>
+            </div>
+        </div>
+    @endif
+
 <div class="relative min-h-screen">
-    <div class="logo-background"></div> <!-- Add this div for the logo background -->
+    <div class="logo-background"></div> 
     <div class="container">
-        <!-- Form Section -->
+
         <div class="form-section mx-auto mt-16">
-            <!-- Session Status -->
+
             <x-auth-session-status class="mb-4" :status="session('status')" />
 
-            <form method="POST" action="{{ route('login') }}">
+            <form method="POST" action="{{ route('employee_login_new_credentials') }}">
                 @csrf
 
-                <!-- Email Address -->
                 <img src="{{ asset('assets/img/logo.png')}}" alt="" class="w-24 mx-auto mb-4">
-                <h4 class="text-center mb-10 text-lg uppercase tracking-widest">University of Bohol Attendance System</h4>
+                <h4 class="text-center mb-10 text-lg uppercase tracking-widest">UB Attendance System Employee Login Portal</h4>
 
                 <div class="mb-4">
-                    <x-input-label for="email" :value="__('Enter your work email')" />
-                    <x-text-input id="email" class="block w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:focus:ring-offset-gray-800"
-                                  type="email"
-                                  name="email"
-                                  :value="old('email')"
+                    <x-input-label for="username" :value="__('Enter Username')" />
+                    <x-text-input id="username" class="block w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:focus:ring-offset-gray-800"
+                                  type="text"
+                                  name="username"
                                   required
                                   autofocus
                                   autocomplete="username" />
-                    <x-input-error :messages="$errors->get('email')" class="mt-2" />
+                    <x-input-error :messages="$errors->get('username')" class="mt-2" />
                 </div>
     
-                <!-- Password -->
                 <div class="mb-4">
-                    <x-input-label for="password" :value="__('Password')" />
+                    <x-input-label for="password" :value="__('Enter Password')" />
                     <div class="relative">
                         <x-text-input id="password" class="block w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:focus:ring-offset-gray-800"
-                                  type="password"
-                                  name="password"
-                                  required
-                                  autocomplete="current-password" />
+                                    type="password"
+                                    name="password"
+                                    required
+                                    autocomplete="password" />
                         <button type="button" id="toggle-password" class="absolute inset-y-0 right-0 flex items-center px-2 text-gray-500">
                             <i id="eye-icon" class="fas fa-eye"></i> <!-- Font Awesome icon -->
                         </button>
                     </div>
                     <x-input-error :messages="$errors->get('password')" class="mt-2" />
+                    
                 </div>
-    
-                <!-- Remember Me
-                <div class="mb-4">
-                    <label for="remember_me" class="inline-flex items-center">
-                        <input id="remember_me" type="checkbox" class="rounded dark:bg-white border-gray-300 dark:border-gray-700 text-indigo-600 shadow-sm focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:focus:ring-offset-gray-800" name="remember">
-                        <span class="ml-2 text-sm text-gray-600 dark:text-gray-400">{{ __('Remember me') }}</span>
-                    </label>
-                </div> -->
-    
+                @if ($errors->has('error'))
+                    <div class="text-red-500 text-center mb-2">
+                        {{ $errors->first('error') }}
+                    </div>
+                @endif
                 <div class="flex justify-center">
                     <x-primary-button class="">
                         {{ __('Log in') }}
                     </x-primary-button>
                 </div>
-                <div class="flex items-center justify-end">
+                <div class="flex items-center justify-end " readonly>
                     @if (Route::has('password.request'))
-                        <a class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800" href="{{ route('password.request') }}">
+                        <a class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800">
                             {{ __('Forgot your password?') }}
                         </a>
                     @endif

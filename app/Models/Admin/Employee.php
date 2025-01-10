@@ -29,6 +29,8 @@ class Employee extends Authenticatable
         'employee_middlename',
         'employee_rfid',
         'role',
+        'username',
+        'password',
 
     ];
 

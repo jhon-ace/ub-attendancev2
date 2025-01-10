@@ -96,18 +96,23 @@
                                   autocomplete="employee_lastname" />
                     <x-input-error :messages="$errors->get('employee_lastname')" class="mt-2" />
                 </div>
-    
+                @if ($errors->has('error'))
+                    <div class="text-red-500 text-center mb-2">
+                        {{ $errors->first('error') }}
+                    </div>
+                @endif
+
                 <div class="flex justify-center">
                     <x-primary-button class="">
                         {{ __('Log in') }}
                     </x-primary-button>
                 </div>
-                <div class="flex items-center justify-end " readonly>
-                    @if (Route::has('password.request'))
-                        <a class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800" href="" >
-                            {{ __('Forgot your password?') }}
+                <div class="flex items-center justify-end">
+                <span class="text-sm">Use username and password to log in, &nbsp;</span>
+                        <a class="underline text-sm text-black " href="{{ route('employee.login.portal2')}}" >
+                            <span class="text-red-500 hover:font-bold"> CLICK HERE</span>
                         </a>
-                    @endif
+
                 </div>
             </form>
         </div>

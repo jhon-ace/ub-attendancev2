@@ -112,6 +112,8 @@ class UserRoutePageName extends Component
 
                 //employee route pages name
                 'employee.dashboard' => __('Employee DTR | Dashboard'),
+                'employee.change.credentials' => __('Employee Change Credentials'),
+                
             ];
 
             $this->title = $titles[$routeName] ?? __('University of Bohol Attendance System');

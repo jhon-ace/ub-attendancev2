@@ -396,7 +396,17 @@ class EmployeeController extends Controller
                             ->where('employee_lastname', $employee_lastname)
                             ->first();
 
-        $password_status = $employee->password_change;
+        if($employee){
+            $password_status = $employee->password_change;
+        } else {
+            return redirect()->back()->withErrors(['error' => 'Invalid credentials.']);
+        }
+                            
+        
+
+        if($password_status === 1) {
+            return redirect()->route('employee.login.portal2')->with('info', 'use your new login credentials');
+        }
 
         
 
@@ -417,13 +427,15 @@ class EmployeeController extends Controller
         if($password_status === 0) 
         {
             return redirect()->route('employee.change.credentials');
+        } else {
+            $uri = '/employee/dashboard';
+            $hashedUri = hash('md5', $uri);
         }
 
-         $uri = '/employee/dashboard';
-        $hashedUri = hash('md5', $uri);
+        
 
         // Redirect with the hash
-        return redirect()->route('employee.dashboard', ['' => $hashedUri]);
+        return redirect()->route('employee.dashboard');
     }
 
 
@@ -438,19 +450,85 @@ class EmployeeController extends Controller
         return redirect()->route('employee.login.portal'); // Ensure proper redirection to the login page
     }
 
+    public function logoutEmployee_new_credentials(Request $request)
+    {
+        Auth::guard('employee')->logout();
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect()->route('employee.login.portal2');
+    }
+
     public function employee_dashboard()
     {
-        if (Auth::user()->hasRole('employee')) {
+
            return view('Admin.employee.dashboard');
-        }         
+    
     }
 
     public function employee_change_credentials()
     {
-            return view('Admin.employee.change_pass');
+        return view('Admin.employee.change_pass');
     }
 
+    public function employee_change_credentials_submit(Request $request, $id)
+    {
+        $validated = $request->validate([
+            'username' => 'required',  // Exclude current employee's username from uniqueness check
+            'password' => 'required|min:8',
+        ]);
+       
+        $employee = Employee::findOrFail($id); 
+        
 
+        $employee->username = $request->input('username');
+        $employee->password = Hash::make($request->input('password')); 
+        $employee->password_change = 1; 
+
+        $employee->save();
+
+        return redirect()->route('employee.dashboard')->with('success', 'Credentials updated successfully!');
+    }
+
+    public function employee_login_new_credentials()
+    {
+        return view('auth.login_employee_new_credentials');
+    }
+
+    public function login_employee_new_credentials(Request $request)
+    {
+        $validated = $request->validate([
+            'username' => 'required',
+            'password' => 'required|min:8',
+        ]);
+
+        $username = strtolower($request->username);
+        $password = $request->password;
+        
+        $employee = Employee::where('username', $username)->first();
+               
+        if ($employee && Hash::check($password, $employee->password)) {
+
+            if (!$employee->hasRole('employee')) {
+                $employee->assignRole('employee'); // Assign the role if not already assigned
+            }
+    
+            Auth::guard('employee')->login($employee);
+    
+            $request->session()->regenerate();
+            
+            $uri = '/employee/dashboard';
+            $hashedUri = hash('md5', $uri);
+        
+            return redirect()->route('employee.dashboard');
+            
+        } else {
+
+            return redirect()->back()->withErrors(['error' => 'Invalid Credentials']);
+        }
+
+    }
 
 
 }

@@ -241,7 +241,7 @@
                         </form>
                     </li>
                 </ul>
-                    <p class="mb-14 px-5 py-3 hidden md:block text-center text-xs text-white">Copyright @2024</p>
+                    <p class="mb-14 px-5 py-3 hidden md:block text-center text-xs text-white">Copyright @2025</p>
             </div>
         </div>
 
@@ -506,7 +506,7 @@
                         </form>
                     </li>
                 </ul>
-                    <p class="mb-14 px-5 py-3 hidden md:block text-center text-xs text-white">Copyright @2024</p>
+                    <p class="mb-14 px-5 py-3 hidden md:block text-center text-xs text-white">Copyright @2025</p>
             </div>
         </div>
 
@@ -566,7 +566,7 @@
                         </form>
                     </li>
                 </ul>
-                    <p class="mb-14 px-5 py-3 hidden md:block text-center text-xs text-white">Copyright @2024</p>
+                    <p class="mb-14 px-5 py-3 hidden md:block text-center text-xs text-white">Copyright @2025</p>
             </div>
         </div>
 
@@ -608,37 +608,151 @@
                         <span class=" text-xs tracking-wide truncate text-gray-200 mt-.5">{{ Auth::guard('employee')->user()->department->department_abbreviation }}</span>
                     </label>
                     <div class="border-t"></div>
-                    
-                    <li>
-                        <a href="{{ route('employee.dashboard') }}" class="relative flex flex-row items-center h-11 focus:outline-none  hover:bg-blue-800 dark:hover:bg-slate-700 text-white hover:text-white-800 border-l-4 border-transparent hover:border-blue-500 dark:hover:border-green-500 hover:text-white pr-6 
-                        {{ request()->routeIs('employee.dashboard') ? ' border-l-green-500 bg-[#172029] text-white' : 'hover:bg-blue-800 dark:hover:bg-slate-700 text-white-600 hover:text-white-800 border-l-4 border-transparent hover:border-blue-500 dark:hover:border-green-500 hover:text-white' }}">
-                            <span class="inline-flex justify-center items-center ml-4">
-                                <i class="fa-solid fa-gauge-high fa-sm text-gray-200 "></i>
-                            </span>
-                            <span class="ml-2 text-sm tracking-wide truncate text-gray-200">My Attendance Reports</span>
-                        </a>
-                    </li>
-                    <li>
-                        <form id="logout" method="POST" action="{{ route('logout.employee') }}" onsubmit="return confirmLogout(event)">
-                            @csrf
-
-                            <button type="submit" class="relative flex flex-row items-center w-full h-11 focus:outline-none  hover:bg-[#172029] text-white] dark:hover:bg-slate-700 text-gray-200 hover:text-white-800 border-l-4 border-transparent hover:border-blue-500 dark:hover:border-green-500 hover:text-white pr-6">
-                                <span class="inline-flex justify-center items-center ml-5">
-                                    <i class="fa-solid fa-right-from-bracket fa-sm text-gray-200"></i>
+                    @php
+                        $employee = Auth::guard('employee')->user()->password_change;
+                    @endphp
+                    @if($employee === 0)
+                        
+                    @else
+                        <li>
+                            <a href="{{ route('employee.dashboard') }}" class="relative flex flex-row items-center h-11 focus:outline-none  hover:bg-blue-800 dark:hover:bg-slate-700 text-white hover:text-white-800 border-l-4 border-transparent hover:border-blue-500 dark:hover:border-green-500 hover:text-white pr-6 
+                            {{ request()->routeIs('employee.dashboard') ? ' border-l-green-500 bg-[#172029] text-white' : 'hover:bg-blue-800 dark:hover:bg-slate-700 text-white-600 hover:text-white-800 border-l-4 border-transparent hover:border-blue-500 dark:hover:border-green-500 hover:text-white' }}">
+                                <span class="inline-flex justify-center items-center ml-4">
+                                    <i class="fa-solid fa-gauge-high fa-sm text-gray-200 "></i>
                                 </span>
-                                <span class="ml-2 text-sm tracking-wide truncate text-gray-200">{{ __('Sign Out') }}</span>
-                            </button>
-                        </form>
-                    </li>
+                                <span class="ml-2 text-sm tracking-wide truncate text-gray-200">My Attendance Reports</span>
+                            </a>
+                        </li>
+                        <li>
+                            
+                            <div x-data="{ open2: false }" x-cloak>
+                                <!-- Modal Background -->
+                                <a @click="open2 = true" class="hover:cursor-pointer relative flex flex-row items-center h-11 focus:outline-none hover:bg-blue-800 dark:hover:bg-slate-700 text-white hover:text-white-800 border-l-4 border-transparent hover:border-blue-500 dark:hover:border-green-500 hover:text-white pr-6">
+                                    <span class="inline-flex justify-center items-center ml-4">
+                                        <i class="fa-solid fa-gauge-high fa-sm text-gray-200 "></i>
+                                    </span>
+                                    <span class="ml-2 text-sm tracking-wide truncate text-gray-200">Change password</span>
+                                </a>
+                                <div x-show="open2" x-transition.opacity.duration.300ms class="fixed inset-0 bg-black bg-opacity-50 z-50" @click="open2 = false"></div>
+
+                                <!-- Modal Content -->
+                                <div x-show="open2" x-transition.duration.300ms class="fixed inset-0 flex items-center justify-center z-50 mt-4">
+                                    <div class="bg-white p-8 rounded-lg shadow-lg max-w-2xl w-full">
+                                        <div class="mt-2 flex justify-between">
+                                            <h2 class="text-lg font-semibold mb-4">Update Credentials</h2>
+                                            <button @click="open2 = false" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded ml-2">
+                                                <i class="fa-solid fa-times fa-xs"></i> Close
+                                            </button>
+                                        </div>
+
+                                        <!-- Modal Body -->
+                                        <div class="space-y-4">
+                                            <form method="POST" action="{{ route('employee.change.credentials.submit', ['id' => Auth::guard('employee')->user()->id]) }}" onsubmit="return confirm('Are you sure you want to update?');">
+                                                @csrf
+                                                @method('PUT')
+                                                
+                                                
+                                                <div class="mb-4">
+                                                    <x-input-label for="username" :value="__('Enter Username')" />
+                                                    <x-text-input id="username" class="block w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:focus:ring-offset-gray-800"
+                                                                type="text"
+                                                                name="username"
+                                                                value="{{ old('username', Auth::guard('employee')->user()->username) }}"
+                                                                required
+                                                                autofocus
+                                                                autocomplete="username" />
+                                                    <x-input-error :messages="$errors->get('username')" class="mt-2" />
+                                                </div>
+
+                                                <div class="mb-4">
+                                                    <x-input-label for="password" :value="__('Enter password')" />
+                                                    <div class="relative">
+                                                        <x-text-input id="password" class="block w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:focus:ring-offset-gray-800"
+                                                                    type="password"
+                                                                    name="password"
+                                                                    value="{{ old('username', Auth::guard('employee')->user()->password) }}"
+                                                                    required
+                                                                    autocomplete="password" />
+                                                        <button type="button" id="toggle-password" class="absolute inset-y-0 right-0 flex items-center px-2 text-gray-500">
+                                                            <i id="eye-icon" class="fas fa-eye"></i> <!-- Font Awesome icon -->
+                                                        </button>
+                                                    </div>
+                                                    <x-input-error :messages="$errors->get('password')" class="mt-2" />
+                                                    <span class="text-red-500">Note: </span><span>This is a hash password, erase to change password</span>
+                                                </div>
+
+                                                <div class="flex justify-center">
+                                                    <x-primary-button class="">
+                                                        {{ __('Save Changes') }}
+                                                    </x-primary-button>
+                                                </div>
+
+                                            </form>
+                                            <div>
+                                                <span class="text-red-500">Note: </span>Upon next login, use the username and password as your new login credentials
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+
+                    @endif
+                    @if($employee === 0)
+                        <li>
+                            <form id="logout" method="POST" action="{{ route('logout.employee') }}" onsubmit="return confirmLogout(event)">
+                                @csrf
+
+                                <button type="submit" class="relative flex flex-row items-center w-full h-11 focus:outline-none  hover:bg-[#172029] text-white] dark:hover:bg-slate-700 text-gray-200 hover:text-white-800 border-l-4 border-transparent hover:border-blue-500 dark:hover:border-green-500 hover:text-white pr-6">
+                                    <span class="inline-flex justify-center items-center ml-5">
+                                        <i class="fa-solid fa-right-from-bracket fa-sm text-gray-200"></i>
+                                    </span>
+                                    <span class="ml-2 text-sm tracking-wide truncate text-gray-200">{{ __('Sign Out') }}</span>
+                                </button>
+                            </form>
+                        </li>
+                    @else
+                        <li>
+                            <form id="logout" method="POST" action="{{ route('logout.employee_new_credentials') }}" onsubmit="return confirmLogout(event)">
+                                @csrf
+
+                                <button type="submit" class="relative flex flex-row items-center w-full h-11 focus:outline-none  hover:bg-[#172029] text-white] dark:hover:bg-slate-700 text-gray-200 hover:text-white-800 border-l-4 border-transparent hover:border-blue-500 dark:hover:border-green-500 hover:text-white pr-6">
+                                    <span class="inline-flex justify-center items-center ml-5">
+                                        <i class="fa-solid fa-right-from-bracket fa-sm text-gray-200"></i>
+                                    </span>
+                                    <span class="ml-2 text-sm tracking-wide truncate text-gray-200">{{ __('Sign Out') }}</span>
+                                </button>
+                            </form>
+                        </li>
+                    @endif
                 </ul>
-                    <p class="mb-14 px-5 py-3 hidden md:block text-center text-xs text-white">Copyright @2024</p>
+                    <p class="mb-14 px-5 py-3 hidden md:block text-center text-xs text-white">Copyright @2025</p>
             </div>
         </div>
 
 @endif
 
 
+<script>
+    const togglePassword = document.getElementById('toggle-password');
+    const passwordField = document.getElementById('password');
+    const eyeIcon = document.getElementById('eye-icon');
 
+    togglePassword.addEventListener('click', () => {
+        // Toggle the type attribute of the password input
+        const type = passwordField.type === 'password' ? 'text' : 'password';
+        passwordField.type = type;
+
+        // Toggle the Font Awesome icon between eye and eye-slash
+        if (type === 'password') {
+            eyeIcon.classList.remove('fa-eye-slash');
+            eyeIcon.classList.add('fa-eye');
+        } else {
+            eyeIcon.classList.remove('fa-eye');
+            eyeIcon.classList.add('fa-eye-slash');
+        }
+    });
+</script>
 <!-- end of admin navigation -->
     <script>
             function confirmLogout(event) {
