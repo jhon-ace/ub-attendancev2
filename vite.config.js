@@ -27,6 +27,7 @@ export default defineConfig({
             // origin: "*",
             // origin: ["http://192.168.33.11:8085", "http://10.10.5.202:8085", "http://192.168.33.11:8014"],
             origin: [
+                "http://192.168.33.11:5173",
                 "http://192.168.33.11:8000", //maam monding
                 "http://192.168.33.11:8001", //carpark
                 "http://192.168.33.11:8002", //diamond
@@ -46,6 +47,7 @@ export default defineConfig({
             ],
             methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
             allowedHeaders: ["Content-Type", "Authorization"],
+            credentials: true,
         },
     },
     //
