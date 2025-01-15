@@ -22,11 +22,6 @@
         </div>
         
         <div class="flex items-center space-x-4">
-            @if($schoolToShow)
-                <p class="text-black mt-2 text-sm mb-1">School: 
-                    <span class="text-red-500 ml-2 font-bold uppercase">{{ $schoolToShow->abbreviation }}</span>
-                </p>
-            @endif
             
             @if(!empty($selectedSchool))
                 <label for="department_id" class="text-black mt-2 text-sm mb-1">Department:</label>

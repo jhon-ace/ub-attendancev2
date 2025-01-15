@@ -34,7 +34,7 @@ class ShowEmployeeAttendance extends Component
     public $sortField = 'employee_id';
     public $sortDirection = 'asc';
     public $selectedSchool = null;
-    public $selectedDepartment4 = null;
+    public $selectedDepartment4 = 1;
     public $selectedEmployee = null;
     public $departmentsToShow;
     public $schoolToShow;
@@ -81,7 +81,7 @@ class ShowEmployeeAttendance extends Component
         $this->selectedYear = now()->year;
 
         //$this->selectedSchool = session('selectedSchool', null);
-        $this->selectedDepartment4 = session('selectedDepartment4', null);
+        // $this->selectedDepartment4 = session('selectedDepartment4', null);
         $this->selectedEmployee = session('selectedEmployee', null);
         $this->departmentsToShow = collect([]);
         $this->schoolToShow = collect([]);
@@ -235,7 +235,7 @@ class ShowEmployeeAttendance extends Component
             $employees = Employee::where('department_id', $this->selectedDepartment4)->get();
         } else {
             $this->departmentToShow = null;
-            $employees = Employee::all();
+            // $employees = Employee::all();
         }
 
         // Apply selected employee filter

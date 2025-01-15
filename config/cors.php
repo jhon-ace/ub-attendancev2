@@ -23,7 +23,9 @@ return [
     // 'allowed_origins' => ['http://localhost:5173'],
     'allowed_origins' => [
         'http://localhost:5173',
-        'http://192.168.33.11:8000', // Backend API origins
+        'http://192.168.33.11:5173',
+         // Backend API origins
+         'http://192.168.33.11:8000',
         'http://192.168.33.11:8001',
         'http://192.168.33.11:8002',
         'http://192.168.33.11:8003',
