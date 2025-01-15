@@ -1,5 +1,4 @@
 <div class="mb-4">
-    
     @if (session('success'))
         <x-sweetalert type="success" :message="session('success')" />
     @endif
@@ -91,7 +90,7 @@
                         <div x-show="open" class="fixed inset-0 flex items-center justify-center z-50">
                             <div class="bg-white p-8 rounded-lg shadow-lg max-w-7xl w-full ">
                                 <div class="mt-2 flex justify-between">
-                                    <h2 class="text-lg font-semibold mb-4">Work Details</h2> <a href="{{ route('admin.workinghour.index') }}"><button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded ml-2 ">Edit Now</button></a>
+                                    <h2 class="text-lg font-semibold mb-4">Work Details</h2> 
                                     <button @click="open = false" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded ml-2 "><i class="fa-solid fa-times fa-xs"></i> Close</button>
                                 </div>
                                 <!-- Modal Body -->
