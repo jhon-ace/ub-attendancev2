@@ -70,7 +70,8 @@ class PublicPageController extends Controller
                 // Exclude departments with 'VDT' in the abbreviation
                 $query->where('department_abbreviation', 'NOT LIKE', '%VDT%');
             })
-            ->whereNotIn('status', ['On Leave', 'Official Travel', 'Holiday', 'Weekend']) // Exclude records with certain statuses
+            // ->whereNotIn('status', ['On Leave', 'Official Travel', 'Holiday', 'Weekend']) // Exclude records with certain statuses
+            ->whereIn('status', ['On-campus', 'Outside Campus'])
             ->orderBy('check_in_time', 'asc') // Order by check_in_time ascending
             ->get();
 
@@ -81,7 +82,8 @@ class PublicPageController extends Controller
                 // Exclude departments with 'VDT' in the abbreviation
                 $query->where('department_abbreviation', 'NOT LIKE', '%VDT%');
             })
-            ->whereNotIn('status', ['On Leave', 'Official Travel', 'Holiday', 'Weekend']) // Exclude records with certain statuses
+            // ->whereNotIn('status', ['On Leave', 'Official Travel', 'Holiday', 'Weekend']) // Exclude records with certain statuses
+            ->whereIn('status', ['On-campus', 'Outside Campus'])
             ->orderBy('check_out_time', 'asc') // Order by check_out_time ascending
             ->get();
 
