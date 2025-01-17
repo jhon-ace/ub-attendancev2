@@ -26,68 +26,33 @@ use Illuminate\Support\Facades\Cache;
 class PublicPageController extends Controller
 {
 
-    // public function fetchLatestEmployeeUB()
-    // {
-    //     // Retrieve data for 'check_in' and 'check_out'
-    //     $curdateDataIn = EmployeeAttendanceTimeIn::with('employee.department')
-    //         ->whereDate('check_in_time', now())
-    //         ->orderBy('check_in_time', 'asc') // Order by check_in_time ascending
-    //         ->get();
-
-
-
-
-    //     $curdateDataOut = EmployeeAttendanceTimeOut::with('employee.department')
-    //         ->whereDate('check_out_time', now())
-    //         ->orderBy('check_out_time', 'asc') // Order by check_out_time ascending
-    //         ->get();
-
-    //     // Optimize by processing the students' profile image logic only once
-    //     $this->addProfileImagesEmployeeUB($curdateDataIn);
-    //     $this->addProfileImagesEmployeeUB($curdateDataOut);
-
-
-    //     $imageHandler = ImageHandler::first();
-
-    //     // Return the result
-    //     return response()->json([
-    //         'curdateDataIn' => $curdateDataIn,
-    //         'imageHandler' => $imageHandler,
-    //         'curdateDataOut' => $curdateDataOut
-
-
-    //     ]);
-    // }
-
     public function fetchLatestEmployeeUB()
     {
         $current_date = now(); // Get the current date
 
-        // Retrieve data for 'check_in' with filtering
         $curdateDataIn = EmployeeAttendanceTimeIn::with('employee.department')
             ->whereDate('check_in_time', $current_date) // Filter by the current date
             ->whereHas('employee.department', function($query) {
                 // Exclude departments with 'VDT' in the abbreviation
                 $query->where('department_abbreviation', 'NOT LIKE', '%VDT%');
             })
-            // ->whereNotIn('status', ['On Leave', 'Official Travel', 'Holiday', 'Weekend']) // Exclude records with certain statuses
-            ->whereIn('status', ['On-campus', 'Outside Campus'])
+            
+            ->whereIn('status', ['On-campus'])
             ->orderBy('check_in_time', 'asc') // Order by check_in_time ascending
             ->get();
 
-        // Retrieve data for 'check_out' with filtering
+
         $curdateDataOut = EmployeeAttendanceTimeOut::with('employee.department')
             ->whereDate('check_out_time', $current_date) // Filter by the current date
             ->whereHas('employee.department', function($query) {
                 // Exclude departments with 'VDT' in the abbreviation
                 $query->where('department_abbreviation', 'NOT LIKE', '%VDT%');
             })
-            // ->whereNotIn('status', ['On Leave', 'Official Travel', 'Holiday', 'Weekend']) // Exclude records with certain statuses
-            ->whereIn('status', ['On-campus', 'Outside Campus'])
+            
+            ->whereIn('status', ['Outside Campus'])
             ->orderBy('check_out_time', 'asc') // Order by check_out_time ascending
             ->get();
 
-        // Optimize by processing the employees' profile image logic only once
         $this->addProfileImagesEmployeeUB($curdateDataIn);
         $this->addProfileImagesEmployeeUB($curdateDataOut);
 
@@ -115,57 +80,23 @@ class PublicPageController extends Controller
         });
     }
 
-     public function portalTimeIn()
+    public function portalTimeIn()
     {
-        // Retrieve any user with the role 'admin'
+
         $adminUser = User::where('role', 'admin')->first();
-        // Check if there is an admin user
 
         if ($adminUser) {
-            // $current_date = now()->setTimezone('Asia/Kuala_Lumpur')->format('Y-m-d');
-            $current_date = now()->setTimezone('Asia/Taipei')->format('Y-m-d');
-            $current_time = now()->setTimezone('Asia/Taipei')->format('H:i:s');
-
-               $timezone = 'Asia/Taipei';
+            $timezone = 'Asia/Taipei';
 
             $current_date1 = Carbon::now($timezone)->format('D, M d, Y'); // E.g., "Mon, Jul 30, 2024"
-            $current_time1 = Carbon::now($timezone)->format('h:i:s A'); 
-
-            // Retrieve attendance data for the current date
-            // $curdateDataIn = EmployeeAttendanceTimeIn::whereDate('check_in_time', $current_date)->get();
-            // $curdateDataOut = EmployeeAttendanceTimeOut::whereDate('check_out_time', $current_date)->get();
-
-            // $curdateDataIn = EmployeeAttendanceTimeIn::whereDate('check_in_time', $current_date)
-            //     ->whereHas('employee.department', function($query) {
-            //         $query->where('department_abbreviation', 'NOT LIKE', '%VDT%');
-            //     })
-            //     ->orderBy('check_in_time', 'asc') // Order by check_in_time in descending order
-            //     ->get();
-
-            $curdateDataIn = EmployeeAttendanceTimeIn::whereDate('check_in_time', $current_date)
-                ->whereHas('employee.department', function($query) {
-                    $query->where('department_abbreviation', 'NOT LIKE', '%VDT%');
-                })
-                ->whereNotIn('status', ['On Leave', 'Official Travel', 'Holiday']) // Exclude records with status 'On Leave' or 'Official Travel'
-                ->orderBy('check_in_time', 'asc') // Order by check_in_time in ascending order
-                ->get();
-
-            $curdateDataOut = EmployeeAttendanceTimeOut::whereDate('check_out_time', $current_date)
-                ->whereHas('employee.department', function($query) {
-                    $query->where('department_abbreviation', 'NOT LIKE', '%VDT%');
-                })
-                ->whereNotIn('status', ['On Leave', 'Official Travel', 'Holiday'])
-                ->orderBy('check_out_time', 'asc') // Order by check_out_time in descending order
-                ->get();
-
-
-            // Return view with the attendance data
-            return view('attendance_time_in', compact('curdateDataIn', 'curdateDataOut','current_time1', 'current_date1'));
+            $current_time1 = Carbon::now($timezone)->format('h:i:s A');    
+            return view('attendance_time_in', compact('current_time1', 'current_date1'));
         }
 
-        // Redirect with an error message if no admin user is found
         return redirect()->back()->with('error', 'No admin user found.');
     }
+
+   
 
     public function submitAttendance(Request $request)
     {
@@ -1294,5 +1225,65 @@ class PublicPageController extends Controller
     //             return redirect()->back()->with('error', 'Unauthorized access.');
     //         }
        
+    // }
+
+
+     // public function portalTimeIn()
+    // {
+    //     // Retrieve any user with the role 'admin'
+    //     $adminUser = User::where('role', 'admin')->first();
+    //     // Check if there is an admin user
+
+    //     if ($adminUser) {
+    //         // $current_date = now()->setTimezone('Asia/Kuala_Lumpur')->format('Y-m-d');
+    //         $current_date = now()->setTimezone('Asia/Taipei')->format('Y-m-d');
+    //         $current_time = now()->setTimezone('Asia/Taipei')->format('H:i:s');
+
+    //            $timezone = 'Asia/Taipei';
+
+    //         $current_date1 = Carbon::now($timezone)->format('D, M d, Y'); // E.g., "Mon, Jul 30, 2024"
+    //         $current_time1 = Carbon::now($timezone)->format('h:i:s A'); 
+
+    //         // Retrieve attendance data for the current date
+    //         // $curdateDataIn = EmployeeAttendanceTimeIn::whereDate('check_in_time', $current_date)->get();
+    //         // $curdateDataOut = EmployeeAttendanceTimeOut::whereDate('check_out_time', $current_date)->get();
+
+    //         // $curdateDataIn = EmployeeAttendanceTimeIn::whereDate('check_in_time', $current_date)
+    //         //     ->whereHas('employee.department', function($query) {
+    //         //         $query->where('department_abbreviation', 'NOT LIKE', '%VDT%');
+    //         //     })
+    //         //     ->orderBy('check_in_time', 'asc') // Order by check_in_time in descending order
+    //         //     ->get();
+
+    //         // $curdateDataIn = EmployeeAttendanceTimeIn::with('employee.department')
+    //         //     ->whereDate('check_in_time', $current_date) // Filter by the current date
+    //         //     ->whereHas('employee.department', function($query) {
+    //         //         // Exclude departments with 'VDT' in the abbreviation
+    //         //         $query->where('department_abbreviation', 'NOT LIKE', '%VDT%');
+    //         //     })
+    //         //     // ->whereNotIn('status', ['On Leave', 'Official Travel', 'Holiday', 'Weekend']) // Exclude records with certain statuses
+    //         //     ->whereIn('status', ['On-campus'])
+    //         //     ->orderBy('check_in_time', 'asc') // Order by check_in_time ascending
+    //         //     ->get();
+
+    //         // // Retrieve data for 'check_out' with filtering
+    //         // $curdateDataOut = EmployeeAttendanceTimeOut::with('employee.department')
+    //         //     ->whereDate('check_out_time', $current_date) // Filter by the current date
+    //         //     ->whereHas('employee.department', function($query) {
+    //         //         // Exclude departments with 'VDT' in the abbreviation
+    //         //         $query->where('department_abbreviation', 'NOT LIKE', '%VDT%');
+    //         //     })
+    //         //     // ->whereNotIn('status', ['On Leave', 'Official Travel', 'Holiday', 'Weekend']) // Exclude records with certain statuses
+    //         //     ->whereIn('status', ['Outside Campus'])
+    //         //     ->orderBy('check_out_time', 'asc') // Order by check_out_time ascending
+    //         //     ->get();
+
+
+    //         // Return view with the attendance data
+    //         return view('attendance_time_in', compact('current_time1', 'current_date1'));
+    //     }
+
+    //     // Redirect with an error message if no admin user is found
+    //     return redirect()->back()->with('error', 'No admin user found.');
     // }
 }

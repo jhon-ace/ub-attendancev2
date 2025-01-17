@@ -212,7 +212,7 @@
                         
                         <img src="{{ asset('assets/img/logo.png') }}" alt="Logo" class="w-[350px] mt-28">
                         <!-- Response Message Above the Image -->
-                        <div id="responseMessage" class="mb-4 text-center text-lg font-semibold uppercase absolute top-0 left-0 w-full tracking-normal"></div>
+                        <div id="responseMessage" class="mb-4 text-center text-lg font-semibold uppercase absolute top-0 left-0 w-full tracking-widest"></div>
                         
                         <!-- Image Below the Response Message -->
                          

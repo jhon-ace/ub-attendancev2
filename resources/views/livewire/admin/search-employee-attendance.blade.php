@@ -477,8 +477,12 @@
                                                                         <a @click="open = false" class="cursor-pointer text-black text-sm px-3 py-2 rounded hover:text-red-500">X</a>
                                                                     </div>
                                                                     <div class="mb-4">
+                                                                    @if (Auth::user()->hasRole('admin'))
                                                                         <form id="updateTimeInForm" action="{{ route('admin.attendanceIn.edit', $attendanceIn->id) }}" method="POST" class="" onsubmit="return confirm('Are you sure you want to update?');">
-                                                                            <x-caps-lock-detector />
+                                                                    @else
+                                                                        <form id="updateTimeInForm" action="{{ route('admin_staff.attendanceIn.edit', $attendanceIn->id) }}" method="POST" class="" onsubmit="return confirm('Are you sure you want to update?');">
+                                                                    @endif
+                                                                        <x-caps-lock-detector />
                                                                             @csrf
                                                                             @method('PUT')
                                                                                 <div class="mb-2 hidden">
