@@ -8,6 +8,7 @@ use \App\Models\Admin\Department;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
 
 class ShowCourseTable extends Component
 {
@@ -30,7 +31,11 @@ class ShowCourseTable extends Component
 
     public function mount()
     {
-        $this->selectedSchool = session('selectedSchool', null);
+        if (Auth::check() && Auth::user()->school) {
+            $this->selectedSchool = Auth::user()->school->id;
+        } else {
+            $this->selectedSchool = 1;
+        }
         $this->selectedDepartment1 = session('selectedDepartment1', null);
         $this->departmentsToShow = collect([]); // Initialize as an empty collection
         $this->schoolToShow = collect([]); // Initialize as an empty collection

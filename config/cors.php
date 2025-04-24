@@ -23,24 +23,24 @@ return [
     // 'allowed_origins' => ['http://localhost:5173'],
     'allowed_origins' => [
         'http://localhost:5173',
-        'http://192.168.33.11:5173',
+        'http://localhost:5173',
          // Backend API origins
-         'http://192.168.33.11:8000',
-        'http://192.168.33.11:8001',
-        'http://192.168.33.11:8002',
-        'http://192.168.33.11:8003',
-        'http://192.168.33.11:8004',
-        'http://192.168.33.11:8005',
-        'http://192.168.33.11:8006', // Backend API origins
-        'http://192.168.33.11:8007',
-        'http://192.168.33.11:8008',
-        'http://192.168.33.11:8009',
-        'http://192.168.33.11:8010',
-        'http://192.168.33.11:8011',
-        'http://192.168.33.11:8012', // Backend API origins
-        'http://192.168.33.11:8013',
-        'http://192.168.33.11:8014',
-        'http://192.168.33.11:8015',
+        'http://localhost:8000',
+        'http://localhost:8001',
+        'http://localhost:8002',
+        'http://localhost:8003',
+        'http://localhost:8004',
+        'http://localhost:8005',
+        'http://localhost:8006', // Backend API origins
+        'http://localhost:8007',
+        'http://localhost:8008',
+        'http://localhost:8009',
+        'http://localhost:8010',
+        'http://localhost:8011',
+        'http://localhost:8012', // Backend API origins
+        'http://localhost:8013',
+        'http://localhost:8014',
+        'http://localhost:8015',
         // Add other trusted origins as needed
     ],
     'allowed_origins_patterns' => [],

@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Builder;
 use App\Models\Admin\StudentAttendanceTimeIn;
 use App\Models\Admin\StudentAttendanceTimeOut;
 use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 
 class ShowStudentAttendance extends Component
 {
@@ -35,9 +36,11 @@ class ShowStudentAttendance extends Component
     public $endDate = null;
     public $selectedMonth;
     public $searchTerm = '';
+    public $selectedYear;
+    public $years;
 
 
-    protected $listeners = ['updateEmployees', 'updateEmployeesByDepartment', 'updateStudentsByCourse', 'updateAttendanceByStudent', 'updateAttendanceByDateRange'];
+    protected $listeners = ['updateMonth','updateEmployees', 'updateEmployeesByDepartment', 'updateStudentsByCourse', 'updateAttendanceByStudent', 'updateAttendanceByDateRange'];
 
     public function updatingSearch()
     {
@@ -58,7 +61,9 @@ class ShowStudentAttendance extends Component
             $this->selectedSchool = Auth::user()->school->id;
         }
 
+
         $this->selectedMonth = now()->month;
+        $this->selectedYear = now()->year;
         $this->selectedDepartment5 = session('selectedDepartment5', null);
         $this->selectedCourse5 = session('selectedCourse5', null);
         $this->selectedStudent5 = session('selectedStudent5', null);
@@ -96,10 +101,54 @@ class ShowStudentAttendance extends Component
         $this->sortField = $field;
     }
 
+    public function updateMonth()
+    {   
+        
+        if ($this->selectedMonth && $this->startDate && $this->endDate) {
+            // Get time-in records for the selected employee and month
+            $this->attendancesToShow = StudentAttendanceTimeIn::where('student_id', $this->selectedStudent5)
+                ->whereYear('check_in_time', $this->selectedYear)
+                ->whereMonth('check_in_time', $this->selectedMonth) // Filter by selected month
+                ->get();
+
+            // Fetch corresponding time-out records
+            $this->attendancesToShow = StudentAttendanceTimeOut::where('student_id', $this->selectedStudent5)
+                ->whereYear('check_out_time', $this->selectedYear)
+                ->whereMonth('check_out_time', $this->selectedMonth) // Filter by selected month
+                ->get();
+
+        } else if($this->selectedMonth){
+            $this->attendancesToShow = StudentAttendanceTimeIn::where('student_id', $this->selectedStudent5)
+                ->whereYear('check_in_time', $this->selectedYear)
+                ->whereMonth('check_in_time', $this->selectedMonth) // Filter by selected month
+                ->get();
+
+            // Fetch corresponding time-out records
+            $this->attendancesToShow = StudentAttendanceTimeOut::where('student_id', $this->selectedStudent5)
+                ->whereYear('check_out_time', $this->selectedYear)
+                ->whereMonth('check_out_time', $this->selectedMonth) // Filter by selected month
+                ->get();
+        } else {
+            // Reset data if no month is selected
+            $this->attendancesToShow = collect();
+            $this->timeOutAttendances = collect();
+            $this->startDate = null; // Reset start date
+            $this->endDate = null;   // Reset end date
+        }
+    }
+
    public function render()
     {
-        $query = Student::query()->with(['course.school', 'course.department']);
+        $months = collect(range(1, 12))->mapWithKeys(function ($month) {
+            return [$month => date('F', mktime(0, 0, 0, $month, 1))];
+        });
 
+        $query = Student::query()->with(['course.school', 'course.department']);
+        $queryTimeIn = StudentAttendanceTimeIn::query()
+            ->with(['student.course']);
+
+        $queryTimeOut = StudentAttendanceTimeOut::query()
+            ->with(['student.course']);
         // Apply search filters
         // $query = $this->applySearchFilters($query);
 
@@ -188,11 +237,7 @@ class ShowStudentAttendance extends Component
             $this->selectedStudentToShow = null;
         }
 
-         $queryTimeIn = StudentAttendanceTimeIn::query()
-            ->with(['student.course']);
 
-        $queryTimeOut = StudentAttendanceTimeOut::query()
-            ->with(['student.course']);
 
         if ($this->selectedStudent5) {
             $queryTimeIn->where('student_id', $this->selectedStudent5);
@@ -368,6 +413,7 @@ class ShowStudentAttendance extends Component
             'selectedStudentToShow' => $this->selectedStudentToShow,
             'selectedAttendanceToShow' => $this->selectedAttendanceToShow,
             'courses' => $courses, // Pass the courses to the view
+            'months' => $months,
         ]);
     }
 
@@ -444,7 +490,125 @@ class ShowStudentAttendance extends Component
             $this->selectedAttendanceToShow = StudentAttendanceTimeOut::where('student_id', $this->selectedStudent5)->get();
     }
 
+    public function generatePDF()
+    {
+        $savePath = storage_path('/app/generatedPDF'); // Default save path (storage/app/)
+        // $savePath = 'C:/Users/YourUsername/Downloads/'; // Windows example
+        //  $currentYear = Carbon::now()->year;
+        //     $currentMonth = Carbon::now()->month;
+        $currentMonth = $this->selectedMonth;  // Get the current month
+        $currentYear = $this->selectedYear;  
 
+        try {
+
+           // Determine the filename dynamically with date included if both startDate and endDate are selected
+            if ($this->startDate && $this->endDate) {
+               
+                 $fullStartDate = $this->startDate;
+                $fullEndDate = $this->endDate;
+
+                // Format using Carbon
+                $selectedStartDate = Carbon::parse($fullStartDate)->format('jS F Y');
+                $selectedEndDate = Carbon::parse($fullEndDate)->format('jS F Y');
+
+
+                $dateRange = $selectedStartDate . ' to ' . $selectedEndDate;
+            } else {
+                $dateRange = Carbon::createFromFormat('m', $this->selectedMonth)->format('F') . ', ' . $this->selectedYear;
+            }
+            
+           $student = Student::find($this->selectedStudent5); 
+
+
+            // Construct the filename with the date range if available
+            $filename = $student->student_lastname . ', ' . $student->student_firstname . ' ' . $student->student_middlename . ' - ' . $dateRange . '.pdf';
+
+
+            // Base query for EmployeeAttendanceTimeIn with left join to EmployeeAttendanceTimeOut
+            $queryTimeIn = StudentAttendanceTimeIn::query()
+                ->with(['student']);
+            $queryTimeOut = StudentAttendanceTimeOut::query()
+                ->with(['student']);
+            
+            // Apply selected student filter
+            if ($this->selectedStudent5) {
+                $queryTimeIn->where('student_id', $this->selectedStudent5);
+                $this->selectedEmployeeToShow = Student::find($this->selectedStudent5);
+                $queryTimeOut->where('student_id', $this->selectedStudent5);
+                $this->selectedEmployeeToShow = Student::find($this->selectedStudent5);
+            } else {
+                $this->selectedEmployeeToShow = null;
+            }
+
+            $currentMonth = $this->selectedMonth;  // Get the current month
+            $currentYear = $this->selectedYear;  
+
+            // Apply date range filter if both dates are set
+            if ($this->startDate && $this->endDate) {
+                $queryTimeIn->whereDay('check_in_time', '>=', $this->startDate)
+                            ->whereMonth('check_in_time', $currentMonth)  // Match current month
+                            ->whereYear('check_in_time', $currentYear) 
+                            ->whereDay('check_in_time', '<=', $this->endDate);
+
+
+                $queryTimeOut->whereDay('check_out_time', '>=', $this->startDate)
+                            ->whereMonth('check_out_time', $currentMonth)  // Match current month
+                            ->whereYear('check_out_time', $currentYear) 
+                            ->whereDay('check_out_time', '<=', $this->endDate);
+                
+                           $attendanceTimeIn = $queryTimeIn
+                ->whereMonth('check_in_time', $currentMonth)  // Match current month
+                ->whereYear('check_in_time', $currentYear)    // Match current year        
+                ->orderBy('student_id', 'asc')
+                ->orderBy('check_in_time', 'asc')
+                ->get();
+
+            $attendanceTimeOut = $queryTimeOut
+                ->whereMonth('check_out_time', $currentMonth)  // Match current month
+                ->whereYear('check_out_time', $currentYear)    // Match current year
+                ->orderBy('student_id', 'asc')
+                ->orderBy('check_out_time', 'asc')
+                ->get();
+            } else {
+                $attendanceTimeIn = $queryTimeIn
+                ->whereMonth('check_in_time', $currentMonth)  // Match current month
+                ->whereYear('check_in_time', $currentYear)    // Match current year        
+                ->orderBy('student_id', 'asc')
+                ->orderBy('check_in_time', 'asc')
+                ->get();
+
+            $attendanceTimeOut = $queryTimeOut
+                ->whereMonth('check_out_time', $currentMonth)  // Match current month
+                ->whereYear('check_out_time', $currentYear)    // Match current year
+                ->orderBy('student_id', 'asc')
+                ->orderBy('check_out_time', 'asc')
+                ->get();
+            }
+            
+            
+
+                session()->flash('success', 'Attendance Report downloaded successfully!');
+                $pdf = \PDF::loadView('generate-pdf-student', [
+                'selectedStartDate' => $this->startDate,
+                'selectedEndDate' => $this->endDate,
+                'selectedMonth' => $currentMonth,
+                'selectedYear' => $currentYear,
+                'attendanceTimeIn' => $attendanceTimeIn,
+                'attendanceTimeOut' => $attendanceTimeOut,
+                'selectedEmployeeToShow' => $this->selectedEmployeeToShow,
+            ])->setPaper('legal', 'landscape'); // Set paper size and orientation
+
+             $pdf->save($savePath . '/' . $filename);
+
+            // Download the PDF file with the given filename
+           
+            
+            return response()->download($savePath . '/' . $filename, $filename);
+        } catch (\Exception $e) {
+            // Log or handle the exception as needed
+            dd($e->getMessage()); // Output the error for debugging
+        }
+    }
     // protected function applySearchFilters($query)
     // {
     //     return $query->where(function (Builder $query) {

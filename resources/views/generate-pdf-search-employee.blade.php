@@ -75,7 +75,7 @@
 </head>
 <body>
     <h4>ATTENDANCE REPORTs</h4>
-    <span>Employee: <text style="color:red">{{ $selectedEmployeeToShow->employee_lastname }}, {{ $selectedEmployeeToShow->employee_firstname }} {{ $selectedEmployeeToShow->employee_middlename }}</text></span><br>
+    <span>Employee: <text style="color:red">{{ $selectedEmployeeToShow->employee_lastname }},  {{ $selectedEmployeeToShow->employee_firstname }}</text></span><br>
     <span>Employee ID: <text style="color:red">{{ $selectedEmployeeToShow->employee_id }}</text></span>
     @if ($selectedStartDate && $selectedEndDate)
         <div class="date-range">
@@ -868,14 +868,12 @@
                         
 
                     @endphp
-                    <div class="flex justify-center mt-2">
-                        <h1 class="uppercase text-[16px]">Department: {{ $departmentToShow->department_abbreviation }}</h1>
-                    </div>
-                    @if ($startDate && $endDate)
+             
+                    @if ($selectedStartDate && $selectedEndDate)
                         <p>Selected Date Range:</p>
                         <div class="flex justify-between -mt-4">
                             
-                            <p class="py-4 text-red-500">{{ \Carbon\Carbon::parse($startDate)->format('M d, Y') }} &nbsp; to &nbsp; {{ \Carbon\Carbon::parse($endDate)->format('M d, Y') }}</p>
+                            <p class="py-4 text-red-500">{{ \Carbon\Carbon::parse($selectedStartDate)->format('M d, Y') }} &nbsp; to &nbsp; {{ \Carbon\Carbon::parse($selectedEndDate)->format('M d, Y') }}</p>
                             <div class="">
                                 <button wire:click="generateExcel" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-2">
                                     <i class="fa-solid fa-file"></i> Export to Excel
@@ -935,7 +933,7 @@
                                                 <div class="w-full">
                                                     <!-- <h3 class="text-center text-lg font-semibold uppercase mb-2 mt-6">Calculation of Work Hours</h3> -->
                                                         <p> Employee: <text class="text-red-500">{{ $selectedEmployeeToShow->employee_lastname }}, {{ $selectedEmployeeToShow->employee_firstname }} {{ $selectedEmployeeToShow->employee_middlename }}</text></p>
-                                                    @if ($startDate && $endDate)
+                                                    @if ($selectedStartDate && $selecteEndDate)
                                                         <p>Selected Date Range:</p>
                                                         <div class="flex justify-between -mt-4">
                                                             

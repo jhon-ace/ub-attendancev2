@@ -10,7 +10,7 @@
             <div class="relative">
                 <div class="container shadow-lg p-5 sm:p-6 md:p-7 lg:p-8 bg-white rounded-md text-black font-medium"
                     :style="{ 'width': isFullScreen ? 'calc(100vw - 16px)' : 'auto', 'margin-left': isFullScreen ? '-192px' : '0' }">
-                    <livewire:admin.show-student-attendance />
+                    
                 </div>
             </div>
         </div>

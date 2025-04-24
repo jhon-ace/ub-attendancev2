@@ -18,17 +18,16 @@
                 <div class="relative">
                     <div class="container shadow-lg p-5 sm:p-6 md:p-7 lg:p-8 bg-white rounded-md text-black font-medium"
                         :style="{ 'width': isFullScreen ? 'calc(100vw - 16px)' : 'auto', 'margin-left': isFullScreen ? '-192px' : '0' }">
-                       <h1>Hellooooo</h1>
-                       
+                        <livewire:admin.show-student-attendancev2/>
                     </div>
                 </div>
             </div>
         </x-content-design>
 </x-app-layout>
 
-    <x-show-hide-sidebar
+    <!-- <x-show-hide-sidebar
         toggleButtonId="toggleButton"
         sidebarContainerId="sidebarContainer"
         dashboardContentId="dashboardContent"
         toggleIconId="toggleIcon"
-    />
+    /> -->

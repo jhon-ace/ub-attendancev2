@@ -1206,19 +1206,29 @@ class SearchEmployeeAttendance extends Component
     {
         $savePath = storage_path('/app/generatedPDF'); // Default save path (storage/app/)
         // $savePath = 'C:/Users/YourUsername/Downloads/'; // Windows example
+        $this->selectedMonth = now()->month;
+        $this->selectedYear = now()->year;
+        
+        $name = $this->selectedEmployeeToShow;
         try {
 
-           // Determine the filename dynamically with date included if both startDate and endDate are selected
             if ($this->startDate && $this->endDate) {
-                $selectedStartDate = date('jS F Y', strtotime($this->startDate));
-                $selectedEndDate = date('jS F Y', strtotime($this->endDate));
-                $dateRange = $selectedStartDate . ' to ' . $selectedEndDate;
-            } else {
-                $dateRange = 'No Date Selected'; // Default text if no date range is selected
-            }
+               
+                $fullStartDate = "{$this->selectedYear}-{$this->selectedMonth}-{$this->startDate}";
+               $fullEndDate = "{$this->selectedYear}-{$this->selectedMonth}-{$this->endDate}";
 
-            // Construct the filename with the date range if available
-            $filename = $this->selectedEmployeeToShow->employee_lastname . ', ' . $this->selectedEmployeeToShow->employee_firstname . ' ' . $this->selectedEmployeeToShow->employee_middlename . ' - ' . $dateRange . '.pdf';
+               // Format using Carbon
+               $selectedStartDate = Carbon::parse($fullStartDate)->format('jS F Y');
+               $selectedEndDate = Carbon::parse($fullEndDate)->format('jS F Y');
+
+
+               $dateRange = $selectedStartDate . ' to ' . $selectedEndDate;
+           } else {
+               $dateRange = Carbon::createFromFormat('m', $this->selectedMonth)->format('F') . ', ' . $this->selectedYear;
+           }
+
+           // Construct the filename with the date range if available
+           $filename = $this->selectedEmployeeToShow->employee_lastname . ', ' . $this->selectedEmployeeToShow->employee_firstname . ' ' . $this->selectedEmployeeToShow->employee_middlename . ' - ' . $dateRange . '.pdf';
 
 
             // Base query for EmployeeAttendanceTimeIn with left join to EmployeeAttendanceTimeOut
@@ -1296,13 +1306,38 @@ class SearchEmployeeAttendance extends Component
             // $attendanceTimeOut = $queryTimeOut->orderBy('check_out_time', 'asc')
             //     ->paginate(100);
 
-            $attendanceTimeIn = $queryTimeIn->where('status', '!=', 'Holiday')
-                ->orderBy('check_in_time', 'asc')
-                ->paginate(100);
+            // $attendanceTimeIn = $queryTimeIn->where('status', '!=', 'Holiday')
+            //     ->orderBy('check_in_time', 'asc')
+            //     ->paginate(100);
 
-            $attendanceTimeOut = $queryTimeOut->where('status', '!=', 'Holiday')
+            // $attendanceTimeOut = $queryTimeOut->where('status', '!=', 'Holiday')
+            //     ->orderBy('check_out_time', 'asc')
+            //     ->paginate(100);
+
+                $queryTimeIn->whereDay('check_in_time', '>=', 1)
+                ->whereDay('check_in_time', '<=', 31);
+
+            $queryTimeOut->whereDay('check_out_time', '>=', 1)
+                        ->whereDay('check_out_time', '<=', 31);
+
+            $currentMonth = $this->selectedMonth;  // Get the current month
+            $currentYear = $this->selectedYear;    // Get the current year
+
+            $attendanceTimeIn = $queryTimeIn
+                ->where('status', '!=', 'Holiday')
+                ->whereMonth('check_in_time', $currentMonth)  // Match current month
+                ->whereYear('check_in_time', $currentYear)    // Match current year        
+                // ->orderBy('employee_id', 'asc')
+                ->orderBy('check_in_time', 'asc')
+                ->get();
+
+            $attendanceTimeOut = $queryTimeOut
+                ->where('status', '!=', 'Holiday')
+                ->whereMonth('check_out_time', $currentMonth)  // Match current month
+                ->whereYear('check_out_time', $currentYear)    // Match current year
+                // ->orderBy('employee_id', 'asc')
                 ->orderBy('check_out_time', 'asc')
-                ->paginate(100);
+                ->get();
 
 
         $attendanceData = [];
@@ -2204,13 +2239,14 @@ class SearchEmployeeAttendance extends Component
                     $overallTotalHoursSum = $overallTotalHoursSumm;
                 }
             }
+           
         }
 
         // Optionally, you can store the $attendanceData and $overallTotalHours in the session or pass it to a view
         session()->put('attendance_data', $attendanceData);
 
         session()->put('overall_total_hours', $overallTotalHours);
-
+        
             // 'overallTotalHours' => $overallTotalHours,
             // 'overallTotalLateHours' => $overallTotalLateHours,
             // 'overallTotalUndertime' => $overallTotalUndertime,
@@ -2226,9 +2262,9 @@ class SearchEmployeeAttendance extends Component
             // 'employees' => $employees, // Ensure employees variable is defined if needed
             // 'selectedAttendanceByDate' => $this->selectedAttendanceByDate,
             // 'departmentDisplayWorkingHour' => $departmentDisplayWorkingHour,
+        //   dd($name->employee_lastname);
 
-
-                $pdf = \PDF::loadView('generate-pdf', [
+                $pdf = \PDF::loadView('generate-pdf-search-employee', [
                 'overallTotalHours' => $overallTotalHours,
                 'overallTotalLateHours' => $overallTotalLateHours,
                 'overallTotalUndertime' => $overallTotalUndertime,
@@ -2238,7 +2274,7 @@ class SearchEmployeeAttendance extends Component
                 'attendanceData' => $attendanceData,
                 'attendanceTimeIn' => $attendanceTimeIn,
                 'attendanceTimeOut' => $attendanceTimeOut,
-                'selectedEmployeeToShow' => $this->selectedEmployeeToShow,
+                'selectedEmployeeToShow' => $name,
             ])->setPaper('legal', 'landscape'); // Set paper size and orientation
 
              $pdf->save($savePath . '/' . $filename);

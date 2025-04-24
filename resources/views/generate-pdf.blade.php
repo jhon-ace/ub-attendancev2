@@ -18,13 +18,13 @@
         .table-container {
             margin-top:20px;
             margin-bottom: 20px;
-          
-             
             text-align: center; /* Center align text within container */
         }
+
         .table-container table {
-            width: 70%;
+            width: 40%;
             border-collapse: collapse;
+            /* background-color:red; */
             /* Float tables to achieve side-by-side display */
             margin-right: 5px; /* Add some margin between tables */
         }
@@ -32,25 +32,29 @@
             border: 1px solid black;
             padding: 2px;
             text-align: center;
+            font-size:10px;
+      
         }
         th {
             background-color: #f2f2f2;
         }
         .table-container .table2 {
-            width: 65%;
+            width: 60%;
             border-collapse: collapse;
-            float: left; /* Float tables to achieve side-by-side display */
+          
             margin-right: 5px; /* Add some margin between tables */
         }
         .table2, th, td {
             border: 1px solid black;
             padding: 2px;
             text-align: center;
+
         }
         .table th {
             background-color: #f2f2f2;
+ 
         }
-        h4 {
+        h3 {
             margin-left: 10px;
             text-align:center;
         }
@@ -74,7 +78,7 @@
      @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body>
-    <h4>ATTENDANCE REPORT</h4>
+    <h3>ATTENDANCE REPORT</h3>
     <span>Employee: <text style="color:red">{{ $selectedEmployeeToShow->employee_lastname }}, {{ $selectedEmployeeToShow->employee_firstname }} {{ $selectedEmployeeToShow->employee_middlename }}</text></span><br>
     <span>Employee ID: <text style="color:red">{{ $selectedEmployeeToShow->employee_id }}</text></span>
     @if ($selectedStartDate && $selectedEndDate)
@@ -232,8 +236,8 @@
                         $workedDate = date('Y-m-d', strtotime($attendance->worked_date));
                     @endphp
                 <tr>
-                    <td class="text-black border border-gray-400 px-2 py-1 font-bold">{{ date('M d, Y (D)', strtotime($attendance->worked_date)) }}</td>
-                    <td class="text-black border border-gray-400 px-2 py-1 w-28">
+                    <td  class="text-black border border-gray-400 px-2 py-1 font-bold">{{ date('M d, Y (D)', strtotime($attendance->worked_date)) }}</td>
+                    <td class="text-black border border-gray-400 px-2 py-1 w-24">
                         @foreach ($groupedAttendance as $employeeId => $dates)
                             @foreach ($dates as $date => $attendance1)
                                 @if ($date === $workedDate)
@@ -273,7 +277,7 @@
                             @endforeach
                         @endforeach
                     </td>
-                    <td class="text-black border border-gray-400 px-2 py-1 w-32">
+                    <td class="text-black border border-gray-400 px-2 py-1 w-24">
                         @foreach ($groupedAttendance as $employeeId => $dates)
                             @foreach ($dates as $date => $attendance1)
                                 @if ($date === $workedDate)
@@ -386,7 +390,7 @@
                             <p>No Late</p>
                         @endif
                     </td>
-                    <td class="text-black border border-gray-400 px-2 py-1 w-24">
+                    <td class="text-black border border-gray-400 px-2 py-1 w-[80px]">
                         @php
                             // Total late time in minutes as a decimal
                             $totalLateMinutesDecimal = $attendance->total_late;
@@ -409,7 +413,7 @@
 
                         {{ $totalLateDurationFormatted }}
                     </td>
-                    <td class="text-black border border-gray-400 p-2 w-[134px]">
+                    <td class="text-black border border-gray-400 p-2 w-24">
                         @php
                             // Calculate undertime in minutes for AM
                             $undertimeInMinutesAM = $attendance->undertimeAM;

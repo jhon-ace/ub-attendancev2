@@ -1,4 +1,5 @@
 <div class="mb-4">
+
     @if (session('success'))
         <x-sweetalert type="success" :message="session('success')" />
     @endif
@@ -352,7 +353,7 @@
                                         <button 
                                             @click="open = true; tab = 'holidays'"
                                             :class="{ 'bg-blue-500 text-white': tab === 'holidays', 'border border-gray-500': tab !== 'holidays' }"
-                                            class="px-4 py-2 mr-[80px] rounded hover:bg-blue-600 hover:text-white focus:outline-none"
+                                            class="px-4 py-2 mr-2 rounded hover:bg-blue-600 hover:text-white focus:outline-none"
                                         >
                                             Holiday Dates
                                         </button>
@@ -370,11 +371,28 @@
                                             </div>
                                         </div>
                                     </div>
+                                    
+                                    
                                 </div>
 
 
                                 <!-- Tab content -->
                                 <div x-show="tab === 'time-in-time-out'" class="w-full">
+                                    <div x-data="{ open: false }" @click.away="open = false">
+                                        <!-- Modal -->
+                                        <button wire:click="generatePDFAttendance" wire:loading.attr="disabled" 
+                                                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-2 rounded mb-2">
+                                                <i class="fa-solid fa-file"></i> Generate Time In & Time Out Report PDF 
+                                        </button>
+                                        <div wire:loading wire:target="generatePDFAttendance" class="fixed inset-0 flex justify-center items-center bg-gray-500 bg-opacity-50 z-50">
+                                            <div class="h-full flex mx-auto justify-center items-center space-x-2 bg-opacity-50 p-6 rounded shadow-lg">
+                                                <div class="flex flex-col items-center">
+                                                    <div class="w-8 h-8 border-4 border-t-transparent border-blue-500 rounded-full animate-spin"></div>
+                                                    <span class="text-center mt-3 text-white z-50">Processing Export of PDF file...</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <!-- Table for Time In -->
                                     <div class="flex justify-between">
                                         <div class="w-[49%]">
@@ -2131,7 +2149,7 @@
                                                                             wire:loading.attr="disabled" 
                                                                         
                                                                             class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-2">
-                                                                            <i class="fa-solid fa-file"></i> Generate PDF 
+                                                                            <i class="fa-solid fa-file"></i> Generate PDF
                                                                         </button>
                                                                     </div>
                                                                 </div>
