@@ -92,7 +92,9 @@
             <span>Selected Date: No date range selected</span>
         </div>
     @endif
+    
     <center>
+    
     <div class="table-container">
         @php
         // Define weekend days (optional, not used since we're not filtering)
@@ -175,7 +177,7 @@
             @endforeach
         </tbody>
     </table>
-
+    <p style="text-align:left">Note: 12 AM for Time In and Time Out means no attendance recorded.  </p>
     </div>
     </center>
 </body>
