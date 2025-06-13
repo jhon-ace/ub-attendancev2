@@ -54,7 +54,8 @@ class ShowEmployeeAttendance extends Component
     public $years = [];
     
     protected $queryString = [
-        'selectedDepartment4' => ['except' => ''] // Keeps URL clean when empty
+        'selectedDepartment4' => ['except' => ''], // Keeps URL clean when empty
+        'selectedEmployee' => ['except' => ''],
     ];
 
     protected $listeners = ['updateMonth','updateEmployees', 'updateEmployeesByDepartment', 'updateAttendanceByEmployee', 'updateAttendanceByDateRange'];

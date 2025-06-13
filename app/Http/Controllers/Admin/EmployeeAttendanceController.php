@@ -789,17 +789,17 @@ public function submitPortalTimeOut(Request $request)
                 $attendanceOutPm->status = $selectedStatus;
                 $attendanceOutPm->save();
 
-                $attendanceInAm = new EmployeeAttendanceTimeIn();
-                $attendanceInAm->employee_id = $employees->id;
-                $attendanceInAm->check_in_time = $departmentWorkingHour ? ($departmentWorkingHour->afternoon_start_time ? $validatedData['selected_date'] . ' ' . $departmentWorkingHour->afternoon_start_time : $validatedData['selected_date']) : $validatedData['selected_date'] . ' 00:00:00';
-                $attendanceInAm->status = $defaultStatus;
-                $attendanceInAm->save();
+                // $attendanceInAm = new EmployeeAttendanceTimeIn();
+                // $attendanceInAm->employee_id = $employees->id;
+                // $attendanceInAm->check_in_time = $departmentWorkingHour ? ($departmentWorkingHour->afternoon_start_time ? $validatedData['selected_date'] . ' ' . $departmentWorkingHour->afternoon_start_time : $validatedData['selected_date']) : $validatedData['selected_date'] . ' 00:00:00';
+                // $attendanceInAm->status = $defaultStatus;
+                // $attendanceInAm->save();
 
-                $attendanceOutAm = new EmployeeAttendanceTimeOut();
-                $attendanceOutAm->employee_id = $employees->id;
-                $attendanceOutAm->check_out_time = $departmentWorkingHour ? ($departmentWorkingHour->afternoon_end_time ? $validatedData['selected_date'] . ' ' . $departmentWorkingHour->afternoon_end_time : $validatedData['selected_date']) : $validatedData['selected_date'] . ' 00:00:00';
-                $attendanceOutAm->status = $defaultStatus;
-                $attendanceOutAm->save();
+                // $attendanceOutAm = new EmployeeAttendanceTimeOut();
+                // $attendanceOutAm->employee_id = $employees->id;
+                // $attendanceOutAm->check_out_time = $departmentWorkingHour ? ($departmentWorkingHour->afternoon_end_time ? $validatedData['selected_date'] . ' ' . $departmentWorkingHour->afternoon_end_time : $validatedData['selected_date']) : $validatedData['selected_date'] . ' 00:00:00';
+                // $attendanceOutAm->status = $defaultStatus;
+                // $attendanceOutAm->save();
 
                 
 
@@ -809,17 +809,18 @@ public function submitPortalTimeOut(Request $request)
             // If only PM shift is selected, create AM attendance with default status
             if (!$validatedData['am_shift'] && $validatedData['pm_shift']) {
 
-                $attendanceInPm = new EmployeeAttendanceTimeIn();
-                $attendanceInPm->employee_id = $employees->id;
-                $attendanceInPm->check_in_time = $departmentWorkingHour ? ($departmentWorkingHour->morning_start_time ? $validatedData['selected_date'] . ' ' . $departmentWorkingHour->morning_start_time : $validatedData['selected_date']) : $validatedData['selected_date'] . ' 00:00:00';
-                $attendanceInPm->status = $defaultStatus;
-                $attendanceInPm->save();
+                // $attendanceInPm = new EmployeeAttendanceTimeIn();
+                // $attendanceInPm->employee_id = $employees->id;
+                // $attendanceInPm->check_in_time = $departmentWorkingHour ? ($departmentWorkingHour->morning_start_time ? $validatedData['selected_date'] . ' ' . $departmentWorkingHour->morning_start_time : $validatedData['selected_date']) : $validatedData['selected_date'] . ' 00:00:00';
+                // $attendanceInPm->status = $defaultStatus;
+                // $attendanceInPm->save();
 
-                $attendanceOutPm = new EmployeeAttendanceTimeOut();
-                $attendanceOutPm->employee_id = $employees->id;
-                $attendanceOutPm->check_out_time = $departmentWorkingHour ? ($departmentWorkingHour->morning_end_time ? $validatedData['selected_date'] . ' ' . $departmentWorkingHour->morning_end_time : $validatedData['selected_date']) : $validatedData['selected_date'] . ' 00:00:00';
-                $attendanceOutPm->status = $defaultStatus;
-                $attendanceOutPm->save();
+                // $attendanceOutPm = new EmployeeAttendanceTimeOut();
+                // $attendanceOutPm->employee_id = $employees->id;
+                // $attendanceOutPm->check_out_time = $departmentWorkingHour ? ($departmentWorkingHour->morning_end_time ? $validatedData['selected_date'] . ' ' . $departmentWorkingHour->morning_end_time : $validatedData['selected_date']) : $validatedData['selected_date'] . ' 00:00:00';
+                // $attendanceOutPm->status = $defaultStatus;
+                // $attendanceOutPm->save();
+                
                 $attendanceInAm = new EmployeeAttendanceTimeIn();
                 $attendanceInAm->employee_id = $employees->id;
                 $attendanceInAm->check_in_time = $departmentWorkingHour ? ($departmentWorkingHour->afternoon_start_time ? $validatedData['selected_date'] . ' ' . $departmentWorkingHour->afternoon_start_time : $validatedData['selected_date']) : $validatedData['selected_date'] . ' 00:00:00';
