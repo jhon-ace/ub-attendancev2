@@ -56,6 +56,10 @@ class DisplayDataforPayroll extends Component
     public $years = [];
     
 
+        protected $queryString = [
+        'selectedDepartment4' => ['except' => ''] // Keeps URL clean when empty
+
+    ]; 
 
     protected $listeners = ['selectMonth','updateMonth', 'updateMonth2','updateEmployees', 'updateEmployeesByDepartment', 'updateAttendanceByEmployee', 'updateAttendanceByDateRange'];
 
@@ -96,8 +100,8 @@ class DisplayDataforPayroll extends Component
         $this->selectedYear = now()->year;
 
         // $this->selectedSchool = session('selectedSchool', null);
-        $this->selectedDepartment4 = session('selectedDepartment4', null);
-        $this->selectedEmployee = session('selectedEmployee', null);
+        // $this->selectedDepartment4 = session('selectedDepartment4', null);
+        // $this->selectedEmployee = session('selectedEmployee', null);
         $this->departmentsToShow = collect([]);
         $this->schoolToShow = collect([]);
         $this->departmentToShow = collect([]);
@@ -402,15 +406,18 @@ class DisplayDataforPayroll extends Component
             $employeeIds = $employees->pluck('id')->toArray();
 
             // Filter time-in and time-out records by department and employee IDs
-            $queryTimeIn->whereIn('employee_id', $employeeIds)
-                        ->whereHas('employee', function (Builder $query) {
-                            $query->where('department_id', $this->selectedDepartment4);
-                        });
+            // $queryTimeIn->whereIn('employee_id', $employeeIds)
+            //             ->whereHas('employee', function (Builder $query) {
+            //                 $query->where('department_id', $this->selectedDepartment4);
+            //             });
 
-            $queryTimeOut->whereIn('employee_id', $employeeIds)
-                        ->whereHas('employee', function (Builder $query) {
-                            $query->where('department_id', $this->selectedDepartment4);
-                        });
+            // $queryTimeOut->whereIn('employee_id', $employeeIds)
+            //             ->whereHas('employee', function (Builder $query) {
+            //                 $query->where('department_id', $this->selectedDepartment4);
+            //             });
+
+            $queryTimeIn->whereIn('employee_id', $employeeIds);
+$queryTimeOut->whereIn('employee_id', $employeeIds);
 
             // $queryTimeIn->whereIn('employee_id', $employeeIds)
             //     ->whereHas('employee', function (Builder $query) {

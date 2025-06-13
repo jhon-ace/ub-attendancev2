@@ -240,7 +240,10 @@ class ShowEmployeeAttendance extends Component
                 $query->where('department_id', $this->selectedDepartment4);
             });
             $this->departmentToShow = Department::find($this->selectedDepartment4);
-            $employees = Employee::where('department_id', $this->selectedDepartment4)->get();
+            // $employees = Employee::where('department_id', $this->selectedDepartment4)->get();
+            $employees = Employee::with('department')
+            ->where('department_id', $this->selectedDepartment4)
+            ->get();
         } else {
             $this->departmentToShow = null;
             // $employees = Employee::all();
@@ -250,34 +253,56 @@ class ShowEmployeeAttendance extends Component
         
         if (($this->selectedEmployee && $this->selectedMonth) || ($this->selectedEmployee)) {
             //$queryTimeIn->where('employee_id', $this->selectedEmployee);
+
+            $currentMonth = str_pad($this->selectedMonth, 2, '0', STR_PAD_LEFT);
+            $currentYear = $this->selectedYear;
+
+            $startDate = "$currentYear-$currentMonth-01 00:00:00";
+            $lastDay = cal_days_in_month(CAL_GREGORIAN, (int)$currentMonth, (int)$currentYear);
+            $endDate = "$currentYear-$currentMonth-$lastDay 23:59:59";
+
             
             $this->selectedEmployeeToShow = Employee::find($this->selectedEmployee);
             //$queryTimeOut->where('employee_id', $this->selectedEmployee);
-            $this->selectedEmployeeToShow = Employee::find($this->selectedEmployee);
+            // $this->selectedEmployeeToShow = Employee::find($this->selectedEmployee);
 
 
-            $queryTimeIn->where('employee_id', $this->selectedEmployee);
+            // $queryTimeIn->where('employee_id', $this->selectedEmployee);
 
-            $queryTimeOut->where('employee_id', $this->selectedEmployee);
+            // $queryTimeOut->where('employee_id', $this->selectedEmployee);
 
-            $currentMonth = $this->selectedMonth;  // Get the current month
-            $currentYear = $this->selectedYear;    // Get the current year
+            // $currentMonth = $this->selectedMonth;  // Get the current month
+            // $currentYear = $this->selectedYear;    // Get the current year
 
-            $attendanceTimeIn = $queryTimeIn
-                ->where('status', '!=', 'Holiday')
-                ->whereMonth('check_in_time', $currentMonth)  // Match current month
-                ->whereYear('check_in_time', $currentYear)    // Match current year        
-                // ->orderBy('employee_id', 'asc')
-                ->orderBy('check_in_time', 'asc')
-                ->get();
+            // $attendanceTimeIn = $queryTimeIn
+            //     ->where('status', '!=', 'Holiday')
+            //     ->whereMonth('check_in_time', $currentMonth)  // Match current month
+            //     ->whereYear('check_in_time', $currentYear)    // Match current year        
+            //     // ->orderBy('employee_id', 'asc')
+            //     ->orderBy('check_in_time', 'asc')
+            //     ->get();
 
-            $attendanceTimeOut = $queryTimeOut
-                ->where('status', '!=', 'Holiday')
-                ->whereMonth('check_out_time', $currentMonth)  // Match current month
-                ->whereYear('check_out_time', $currentYear)    // Match current year
-                // ->orderBy('employee_id', 'asc')
-                ->orderBy('check_out_time', 'asc')
-                ->get();
+            // $attendanceTimeOut = $queryTimeOut
+            //     ->where('status', '!=', 'Holiday')
+            //     ->whereMonth('check_out_time', $currentMonth)  // Match current month
+            //     ->whereYear('check_out_time', $currentYear)    // Match current year
+            //     // ->orderBy('employee_id', 'asc')
+            //     ->orderBy('check_out_time', 'asc')
+            //     ->get();
+
+
+            $queryTimeIn->where('employee_id', $this->selectedEmployee)
+            ->where('status', '!=', 'Holiday')
+            ->whereBetween('check_in_time', [$startDate, $endDate]);
+
+            $queryTimeOut->where('employee_id', $this->selectedEmployee)
+                        ->where('status', '!=', 'Holiday')
+                        ->whereBetween('check_out_time', [$startDate, $endDate]);
+
+            $attendanceTimeIn = $queryTimeIn->orderBy('check_in_time', 'asc')->get();
+            $attendanceTimeOut = $queryTimeOut->orderBy('check_out_time', 'asc')->get();
+
+
         } else {
             $this->selectedEmployeeToShow = null;
         }
@@ -331,30 +356,57 @@ class ShowEmployeeAttendance extends Component
 
 
         } else {
-             $queryTimeIn->whereDay('check_in_time', '>=', 1)
-                        ->whereDay('check_in_time', '<=', 31);
+            //  $queryTimeIn->whereDay('check_in_time', '>=', 1)
+            //             ->whereDay('check_in_time', '<=', 31);
 
-            $queryTimeOut->whereDay('check_out_time', '>=', 1)
-                        ->whereDay('check_out_time', '<=', 31);
+            // $queryTimeOut->whereDay('check_out_time', '>=', 1)
+            //             ->whereDay('check_out_time', '<=', 31);
 
-            $currentMonth = $this->selectedMonth;  // Get the current month
-            $currentYear = $this->selectedYear;    // Get the current year
+            // $currentMonth = $this->selectedMonth;  // Get the current month
+            // $currentYear = $this->selectedYear;    // Get the current year
 
+            // $attendanceTimeIn = $queryTimeIn
+            //     ->where('status', '!=', 'Holiday')
+            //     ->whereMonth('check_in_time', $currentMonth)  // Match current month
+            //     ->whereYear('check_in_time', $currentYear)    // Match current year        
+            //     // ->orderBy('employee_id', 'asc')
+            //     ->orderBy('check_in_time', 'asc')
+            //     ->get();
+
+            // $attendanceTimeOut = $queryTimeOut
+            //     ->where('status', '!=', 'Holiday')
+            //     ->whereMonth('check_out_time', $currentMonth)  // Match current month
+            //     ->whereYear('check_out_time', $currentYear)    // Match current year
+            //     // ->orderBy('employee_id', 'asc')
+            //     ->orderBy('check_out_time', 'asc')
+            //     ->get();
+
+            // Assume these are already provided
+            $currentMonth = str_pad($this->selectedMonth, 2, '0', STR_PAD_LEFT); // e.g. "06"
+            $currentYear = $this->selectedYear;                                  // e.g. 2025
+
+            // Build start and end datetime strings for the selected month
+            $startDate = "$currentYear-$currentMonth-01 00:00:00";
+
+            // Get last day of the month
+            $lastDay = cal_days_in_month(CAL_GREGORIAN, (int)$currentMonth, (int)$currentYear);
+            $endDate = "$currentYear-$currentMonth-$lastDay 23:59:59";
+
+            // Final optimized queries
             $attendanceTimeIn = $queryTimeIn
                 ->where('status', '!=', 'Holiday')
-                ->whereMonth('check_in_time', $currentMonth)  // Match current month
-                ->whereYear('check_in_time', $currentYear)    // Match current year        
-                // ->orderBy('employee_id', 'asc')
+                ->whereBetween('check_in_time', [$startDate, $endDate])
                 ->orderBy('check_in_time', 'asc')
                 ->get();
 
             $attendanceTimeOut = $queryTimeOut
                 ->where('status', '!=', 'Holiday')
-                ->whereMonth('check_out_time', $currentMonth)  // Match current month
-                ->whereYear('check_out_time', $currentYear)    // Match current year
-                // ->orderBy('employee_id', 'asc')
+                ->whereBetween('check_out_time', [$startDate, $endDate])
                 ->orderBy('check_out_time', 'asc')
                 ->get();
+
+      
+
         }
         
 

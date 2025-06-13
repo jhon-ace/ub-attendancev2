@@ -1,11 +1,7 @@
 <div class="mb-4">
 
 
-        @php
-           
-            session(['selectedDepartment4' => $selectedDepartment4]);
-            session(['selectedEmployee' => $selectedEmployee])
-        @endphp
+
         @if (session('success'))
             <x-sweetalert type="success" :message="session('success')" />
         @endif
