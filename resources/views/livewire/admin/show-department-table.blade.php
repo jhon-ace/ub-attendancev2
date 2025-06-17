@@ -1,7 +1,9 @@
 @php
     session(['selectedSchool' => $selectedSchool]);
+    
 @endphp
 @if (Auth::user()->hasRole('admin')) 
+
     <div>
         @if (session('success'))
             <x-sweetalert type="success" :message="session('success')" />
@@ -21,41 +23,17 @@
         <div class="flex flex-col md:flex-row items-start md:items-center md:justify-start">
             <!-- Dropdown and Delete Button -->
             <div class="flex items-center w-full md:w-auto">
-                <label for="school_id" class="block text-sm text-gray-700 font-bold md:mr-4 truncate uppercase">School Name:</label>
-                <select wire:model="selectedSchool" id="school_id" name="school_id" wire:change="updateDepartments"
-                        class="cursor-pointer text-sm shadow appearance-none border pr-16 rounded py-2 px-2 text-black leading-tight focus:outline-none focus:shadow-outline @error('school_id') is-invalid @enderror md:w-auto"
-                        required>
-                    <option value="">Select Year</option>
-                    @foreach($schools as $school)
-                        <option value="{{ $school->id }}">{{ $school->abbreviation }}</option>
-                    @endforeach
-                </select>
-                
-                @if($schoolToShow)
-                    <!-- <form id="deleteAll" action="{{ route('admin.department.deleteAll') }}" method="POST" onsubmit="return confirmDeleteAll(event);" class="flex ml-4">
-                    @csrf
-                    @method('DELETE')
-                    <input type="hidden" name="school_id" id="school_id_to_delete">
-                    <button type="submit" class="text-xs lg:text-sm bg-red-500 text-white px-3 py-2 rounded-md hover:bg-red-700">
-                        <i class="fa-solid fa-trash fa-sm"></i>
-                    </button>
-                </form> -->
-                @else
-                    
-                @endif
-            </div>
-            <!-- Search Input -->
-            <div class="w-full flex justify-end mt-4 md:mt-0 md:ml-4">
-                @if(empty($selectedSchool)) 
-                    
-                @else
-                    <input wire:model.live="search" type="text" class="text-sm border text-black border-gray-300 rounded-md px-3 py-1.5 w-64" placeholder="Search..." autofocus>
-                @endif
+                <!-- <label for="school_id" class="block text-sm text-gray-700 font-bold md:mr-4 truncate uppercase">School Name:</label> -->
+                <div class="col-span-3">
+                    @if($schoolToShow)
+                            <p class="w-64 text-black mt-10 text-sm mb-1">School: <span class="text-red-500 ml-2 font-bold uppercase">{{ $schoolToShow->abbreviation }}</span></p>
+                    @endif
+                </div>
             </div>
         </div>
         <hr class="border-gray-200 my-4">
         @if($schoolToShow)
-        <form action="{{ route('admin.csv.import.department') }}" method="post" enctype="multipart/form-data">
+        <!-- <form action="{{ route('admin.csv.import.department') }}" method="post" enctype="multipart/form-data">
                         @csrf
                         <div class="flex items-center space-x-2 mb-2">
                             <label for="csv_file" class="text-sm font-medium text-gray-700">Import CSV file:</label>
@@ -69,7 +47,7 @@
                                 Import
                             </button>
                         </div>
-                    </form>
+                    </form> -->
         <div class="flex justify-between">
             <p class="text-black mt-2 text-sm mb-4">Selected School Name: <text class="uppercase text-red-500">{{ $schoolToShow->abbreviation }}</text></p>
             <div x-data="{ open: false }">
@@ -111,12 +89,7 @@
                                         <input type="text" name="department_name" id="department_name" value="{{ old('department_name') }}" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline @error('department_name') is-invalid @enderror" required>
                                         <x-input-error :messages="$errors->get('department_name')" class="mt-2" />
                                     </div>
-                                    <div class="mb-2">
-                                        <label for="department_name" class="block text-gray-700 text-md font-bold mb-2">Department Name</label>
-                                        <input type="text" name="department_name" id="department_name" value="{{ old('department_name') }}" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline @error('department_name') is-invalid @enderror" required>
-                                        <x-input-error :messages="$errors->get('department_name')" class="mt-2" />
-                                    </div>
-
+                                   
                                     <div class="mb-2">
                                         <label for="dept_identifier" class="block text-gray-700 text-md font-bold mb-2">This department is for: </label>
                                         <select id="dept_identifier" name="dept_identifier" class="shadow appearance-none border rounded w-full py-2 px-3 text-black leading-tight focus:outline-none focus:shadow-outline @error('dept_identifier') is-invalid @enderror" required>

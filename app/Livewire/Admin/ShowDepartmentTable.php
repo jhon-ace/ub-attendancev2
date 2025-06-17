@@ -33,6 +33,8 @@ class ShowDepartmentTable extends Component
     {
         if (Auth::check() && Auth::user()->school) {
             $this->selectedSchool = Auth::user()->school->id;
+        } else {
+            $this->selectedSchool = 1;
         }
         $this->departmentsToShow = collect([]); // Initialize as an empty collection
         $this->schoolToShow = collect([]); // Initialize as an empty collection
@@ -64,9 +66,10 @@ public function render()
         $query = $this->applySearchFilters($query);
         
         // Apply selected school filter
+        
         if ($this->selectedSchool) {
             $query->where('school_id', $this->selectedSchool);
-            $this->schoolToShow = School::findOrFail($this->selectedSchool);
+            $this->schoolToShow = School::find($this->selectedSchool);
         } else {
             $this->schoolToShow = null; // Reset schoolToShow if no school is selected
         }
