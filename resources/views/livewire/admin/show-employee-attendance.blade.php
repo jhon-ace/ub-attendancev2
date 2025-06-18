@@ -3321,31 +3321,34 @@
 
                                 <!-- HOLIDAYS  -->
                                 <div x-show="tab === 'holidays'" class="w-full">
-                                    <div class="flex flex-col items-center mt-8 w-full mx-auto">
-                                        <p class="text-black text-xl text-center mb-2">LIST OF ADDED HOLIDAYS</p>
-                                        <p class="text-center mb-4">Holiday dates are excluded from calculations and are not included in the attendance or working hour computations.</p>
-                                        <div class="w-[40%] flex justify-center mb-4">
-                                            @if($holidays->isNotEmpty())
-                                                <table class="border border-collapse border-1 border-black w-full mb-4">
+                                    <div class="flex flex-col items-center mt-8 w-64 mx-auto">
+                                        <!-- Title and Description -->
+                                        <p class="text-black text-2xl font-semibold text-center mb-2">List of Holidays</p>
+                                        <!-- Table -->
+                                        @if($holidays->isNotEmpty())
+                                            <div class="overflow-y-auto h-64 w-full"> <!-- Adjust the height as needed -->
+                                                <table class="border border-collapse border-gray-300 w-full bg-white shadow-md rounded-lg">
                                                     <thead>
-                                                        <tr class="border border-collapse border-1 border-black">
-                                                            <th class="border border-collapse border-1 border-black p-2">Date</th>
+                                                        <tr class="bg-gray-100 border-b border-gray-300">
+                                                            <th class="p-3 text-left text-gray-700 font-medium">Date of Holiday</th>
+                                                            
                                                         </tr>
                                                     </thead>
                                                     <tbody>
                                                         @foreach($holidays as $holiday)
-                                                            <tr class="border border-collapse border-1 border-black text-center">
-                                                                <td class="border border-collapse border-1 border-black p-2">{{ \Carbon\Carbon::parse($holiday->check_in_date)->format('F j, Y') }}</td>
+                        
+                                                            <tr class="border-b border-gray-300 text-left">
+                                                                <td class="p-3 text-gray-800">{{ \Carbon\Carbon::parse($holiday->check_in_date)->format('F j, Y') }}</td>
                                                             </tr>
                                                         @endforeach
                                                     </tbody>
                                                 </table>
-                                            @else
-                                                <p class="font-bold text-red-500 mb-4 text-center">No Holiday Dates Confirmed yet.</p>
-                                            @endif
-                                        </div>
+                                            </div>    
+                                        @else
+                                            <p class="font-bold text-red-500 mb-4 text-center">No holiday dates confirmed yet.</p>
+                                        @endif
                                     </div>
-                                </div>
+
                             </div>
                         </div>
                         
