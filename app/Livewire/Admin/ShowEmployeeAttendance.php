@@ -1367,10 +1367,10 @@ class ShowEmployeeAttendance extends Component
         $gracePeriod = GracePeriod::all();
 
         $holidays = EmployeeAttendanceTimeIn::where('status', 'Holiday')
-            ->select(DB::raw('DATE(check_in_time) as check_in_date')) // Extract only the date
-            ->groupBy('check_in_date') // Group by the extracted date
-            ->orderBy('check_in_date', 'asc') // Order by date (ascending)
-            ->get();
+        ->select(DB::raw('DATE(check_in_time) as check_in_date'), 'holiday_description')
+        ->groupBy('check_in_date', 'holiday_description')
+        ->orderBy('check_in_date', 'desc')
+        ->get();
 
         // $holidaysCheck = EmployeeAttendanceTimeIn::whereBetween(DB::raw('DATE(check_in_time)'), [$this->startDate, $this->endDate])->get();
 

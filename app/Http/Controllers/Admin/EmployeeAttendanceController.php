@@ -1239,7 +1239,7 @@ public function submitPortalTimeOut(Request $request)
                             $query->where('id', $schoolId); // Filter holidays by school_id
                         })
                         ->groupBy(DB::raw('DATE(check_in_time)'), 'holiday_description') // Group by the extracted date and holiday description
-                        ->orderBy('check_in_date', 'asc') // Order by the extracted date
+                        ->orderBy('check_in_date', 'desc') // Order by the extracted date
                         ->get();
 
 

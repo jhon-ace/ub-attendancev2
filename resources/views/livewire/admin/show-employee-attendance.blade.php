@@ -3320,17 +3320,18 @@
 
 
                                 <!-- HOLIDAYS  -->
-                                <div x-show="tab === 'holidays'" class="w-full">
-                                    <div class="flex flex-col items-center mt-8 w-64 mx-auto">
+                                <div x-show="tab === 'holidays'" class="w-72">
+                                    <div class="flex flex-col items-center mt-8 w-72 mx-auto">
                                         <!-- Title and Description -->
                                         <p class="text-black text-2xl font-semibold text-center mb-2">List of Holidays</p>
                                         <!-- Table -->
                                         @if($holidays->isNotEmpty())
-                                            <div class="overflow-y-auto h-64 w-full"> <!-- Adjust the height as needed -->
-                                                <table class="border border-collapse border-gray-300 w-full bg-white shadow-md rounded-lg">
+                                            <div class="overflow-y-auto h-64 w-72"> <!-- Adjust the height as needed -->
+                                                <table class="border border-collapse border-gray-300 w-72 bg-white shadow-md rounded-lg">
                                                     <thead>
                                                         <tr class="bg-gray-100 border-b border-gray-300">
                                                             <th class="p-3 text-left text-gray-700 font-medium">Date of Holiday</th>
+                                                            <th class="p-3 text-left text-gray-700 font-medium">Description</th>
                                                             
                                                         </tr>
                                                     </thead>
@@ -3339,6 +3340,7 @@
                         
                                                             <tr class="border-b border-gray-300 text-left">
                                                                 <td class="p-3 text-gray-800">{{ \Carbon\Carbon::parse($holiday->check_in_date)->format('F j, Y') }}</td>
+                                                                <td class="p-3 text-gray-800">{{ $holiday->holiday_description }}</td>
                                                             </tr>
                                                         @endforeach
                                                     </tbody>
