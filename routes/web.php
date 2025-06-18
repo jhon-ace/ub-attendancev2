@@ -128,7 +128,8 @@ Route::middleware(['auth:web'])->group(function () {
             Route::post('/attendance/time-in/portal', 'submitPortalTimeIn')->name('attendance.time-in.store');
             Route::post('/attendance/time-out/portal', 'submitPortalTimeOut')->name('attendance.time-out.store');   
             Route::post('/attendance/modify', 'modifyAttendance')->name('attendance.modify');
-            Route::post('/attendance/modify/halfday', 'modifyAttendanceHalfDay')->name('attendance.modify.halfDay');   
+            Route::post('/attendance/modify/halfday', 'modifyAttendanceHalfDay')->name('attendance.modify.halfDay'); 
+            
 
             Route::put('/edit-TimeIn/{id}', 'attendanceTimeInUpdate')->name('attendanceIn.edit');
             Route::put('/edit-TimeOut/{id}', 'attendanceTimeOutUpdate')->name('attendanceOut.edit');
@@ -198,6 +199,7 @@ Route::middleware(['auth:web'])->group(function () {
 
                 Route::post('/attendance/modify', 'modifyAttendance')->name('attendance.modify');
                 Route::post('/attendance/modify/halfday', 'modifyAttendanceHalfDay')->name('attendance.modify.halfDay'); 
+                Route::post('/attendance/modify/date-as-absent', 'modifyAttendanceAbsent')->name('attendance.modify.absent'); 
 
                 Route::get('/setGracePeriodSet', 'storePeriodView')->name('attendance.gracePeriodSet');
                 Route::post('/setGracePeriod', 'storePeriod')->name('attendance.gracePeriod');

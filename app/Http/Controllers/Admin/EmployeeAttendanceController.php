@@ -727,126 +727,197 @@ public function submitPortalTimeOut(Request $request)
     // }
 
 
-   public function modifyAttendanceHalfDay(Request $request)
-{
-    // Validate the request data
-    $validatedData = $request->validate([
-        'selected_date' => 'required|date',
-        'status' => 'required|string',
-        'employee_id' => 'required|integer',
-        'day_of_week' => 'required|integer',
-        'am_shift' => 'nullable|string',
-        'pm_shift' => 'nullable|string',
-    ]);
+    public function modifyAttendanceHalfDay(Request $request)
+    {
+        // Validate the request data
+        $validatedData = $request->validate([
+            'selected_date' => 'required|date',
+            'status' => 'required|string',
+            'employee_id' => 'required|integer',
+            'day_of_week' => 'required|integer',
+            'am_shift' => 'nullable|string',
+            'pm_shift' => 'nullable|string',
+        ]);
 
-    // Convert checkbox values to boolean
-    $validatedData['am_shift'] = $validatedData['am_shift'] === '1'; // Checkbox values might be '1' or '0'
-    $validatedData['pm_shift'] = $validatedData['pm_shift'] === '1'; // Checkbox values might be '1' or '0'
+        // Convert checkbox values to boolean
+        $validatedData['am_shift'] = $validatedData['am_shift'] === '1'; // Checkbox values might be '1' or '0'
+        $validatedData['pm_shift'] = $validatedData['pm_shift'] === '1'; // Checkbox values might be '1' or '0'
 
-    $employee_id = $validatedData['employee_id'];
-    $employees = Employee::where('id', $employee_id)->first();
+        $employee_id = $validatedData['employee_id'];
+        $employees = Employee::where('id', $employee_id)->first();
 
-    if ($employees) {
-        $dateOnly = Carbon::parse($validatedData['selected_date'])->format('Y-m-d');
-        $dayOfWeek = Carbon::parse($validatedData['selected_date'])->dayOfWeek;
+        if ($employees) {
+            $dateOnly = Carbon::parse($validatedData['selected_date'])->format('Y-m-d');
+            $dayOfWeek = Carbon::parse($validatedData['selected_date'])->dayOfWeek;
 
-        // Check if there are already 2 check-in and 2 check-out records for the employee on the selected date
-        $checkInCount = EmployeeAttendanceTimeIn::where('employee_id', $employee_id)
-            ->whereDate('check_in_time', $dateOnly)
-            ->count();
+            // Check if there are already 2 check-in and 2 check-out records for the employee on the selected date
+            $checkInCount = EmployeeAttendanceTimeIn::where('employee_id', $employee_id)
+                ->whereDate('check_in_time', $dateOnly)
+                ->count();
 
-        $checkOutCount = EmployeeAttendanceTimeOut::where('employee_id', $employee_id)
-            ->whereDate('check_out_time', $dateOnly)
-            ->count();
+            $checkOutCount = EmployeeAttendanceTimeOut::where('employee_id', $employee_id)
+                ->whereDate('check_out_time', $dateOnly)
+                ->count();
 
-        if ($checkInCount == 0 && $checkOutCount == 0) {
-            $currentDayOfWeek = now()->dayOfWeek;
+            if ($checkInCount == 0 && $checkOutCount == 0) {
+                $currentDayOfWeek = now()->dayOfWeek;
 
-            // Retrieve the DepartmentWorkingHour record for the current department and day of the week
-            $departmentWorkingHour = DepartmentWorkingHour::where('department_id', $employees->department_id)
-                ->where('day_of_week', $dayOfWeek)
-                ->first();
+                // Retrieve the DepartmentWorkingHour record for the current department and day of the week
+                $departmentWorkingHour = DepartmentWorkingHour::where('department_id', $employees->department_id)
+                    ->where('day_of_week', $dayOfWeek)
+                    ->first();
 
-            // Determine status for AM and PM shifts
-            $selectedStatus = $validatedData['status'];
-            $defaultStatus = 'On-Campus'; // Set default status
+                // Determine status for AM and PM shifts
+                $selectedStatus = $validatedData['status'];
+                $defaultStatus = 'On-Campus'; // Set default status
 
-            if ($validatedData['am_shift'] && $validatedData['pm_shift']) {
-                return back()->with('error', 'Error! AM and PM are selected for half day leave');
+                if ($validatedData['am_shift'] && $validatedData['pm_shift']) {
+                    return back()->with('error', 'Error! AM and PM are selected for half day leave');
+                }
+                // If only AM shift is selected, create PM attendance with default status
+                if ($validatedData['am_shift'] && !$validatedData['pm_shift']) {
+                    
+                    $attendanceInPm = new EmployeeAttendanceTimeIn();
+                    $attendanceInPm->employee_id = $employees->id;
+                    $attendanceInPm->check_in_time = $departmentWorkingHour ? ($departmentWorkingHour->morning_start_time ? $validatedData['selected_date'] . ' ' . $departmentWorkingHour->morning_start_time : $validatedData['selected_date']) : $validatedData['selected_date'] . ' 00:00:00';
+                    $attendanceInPm->status = $selectedStatus;
+                    $attendanceInPm->save();
+
+                    $attendanceOutPm = new EmployeeAttendanceTimeOut();
+                    $attendanceOutPm->employee_id = $employees->id;
+                    $attendanceOutPm->check_out_time = $departmentWorkingHour ? ($departmentWorkingHour->morning_end_time ? $validatedData['selected_date'] . ' ' . $departmentWorkingHour->morning_end_time : $validatedData['selected_date']) : $validatedData['selected_date'] . ' 00:00:00';
+                    $attendanceOutPm->status = $selectedStatus;
+                    $attendanceOutPm->save();
+
+                    // $attendanceInAm = new EmployeeAttendanceTimeIn();
+                    // $attendanceInAm->employee_id = $employees->id;
+                    // $attendanceInAm->check_in_time = $departmentWorkingHour ? ($departmentWorkingHour->afternoon_start_time ? $validatedData['selected_date'] . ' ' . $departmentWorkingHour->afternoon_start_time : $validatedData['selected_date']) : $validatedData['selected_date'] . ' 00:00:00';
+                    // $attendanceInAm->status = $defaultStatus;
+                    // $attendanceInAm->save();
+
+                    // $attendanceOutAm = new EmployeeAttendanceTimeOut();
+                    // $attendanceOutAm->employee_id = $employees->id;
+                    // $attendanceOutAm->check_out_time = $departmentWorkingHour ? ($departmentWorkingHour->afternoon_end_time ? $validatedData['selected_date'] . ' ' . $departmentWorkingHour->afternoon_end_time : $validatedData['selected_date']) : $validatedData['selected_date'] . ' 00:00:00';
+                    // $attendanceOutAm->status = $defaultStatus;
+                    // $attendanceOutAm->save();
+
+                    
+
+
+                }
+
+                // If only PM shift is selected, create AM attendance with default status
+                if (!$validatedData['am_shift'] && $validatedData['pm_shift']) {
+
+                    // $attendanceInPm = new EmployeeAttendanceTimeIn();
+                    // $attendanceInPm->employee_id = $employees->id;
+                    // $attendanceInPm->check_in_time = $departmentWorkingHour ? ($departmentWorkingHour->morning_start_time ? $validatedData['selected_date'] . ' ' . $departmentWorkingHour->morning_start_time : $validatedData['selected_date']) : $validatedData['selected_date'] . ' 00:00:00';
+                    // $attendanceInPm->status = $defaultStatus;
+                    // $attendanceInPm->save();
+
+                    // $attendanceOutPm = new EmployeeAttendanceTimeOut();
+                    // $attendanceOutPm->employee_id = $employees->id;
+                    // $attendanceOutPm->check_out_time = $departmentWorkingHour ? ($departmentWorkingHour->morning_end_time ? $validatedData['selected_date'] . ' ' . $departmentWorkingHour->morning_end_time : $validatedData['selected_date']) : $validatedData['selected_date'] . ' 00:00:00';
+                    // $attendanceOutPm->status = $defaultStatus;
+                    // $attendanceOutPm->save();
+
+                    $attendanceInAm = new EmployeeAttendanceTimeIn();
+                    $attendanceInAm->employee_id = $employees->id;
+                    $attendanceInAm->check_in_time = $departmentWorkingHour ? ($departmentWorkingHour->afternoon_start_time ? $validatedData['selected_date'] . ' ' . $departmentWorkingHour->afternoon_start_time : $validatedData['selected_date']) : $validatedData['selected_date'] . ' 00:00:00';
+                    $attendanceInAm->status = $selectedStatus;
+                    $attendanceInAm->save();
+
+                    $attendanceOutAm = new EmployeeAttendanceTimeOut();
+                    $attendanceOutAm->employee_id = $employees->id;
+                    $attendanceOutAm->check_out_time = $departmentWorkingHour ? ($departmentWorkingHour->afternoon_end_time ? $validatedData['selected_date'] . ' ' . $departmentWorkingHour->afternoon_end_time : $validatedData['selected_date']) : $validatedData['selected_date'] . ' 00:00:00';
+                    $attendanceOutAm->status = $selectedStatus;
+                    $attendanceOutAm->save();
+
+
+                    
+                }
+
+            } elseif ($checkInCount == 2 && $checkOutCount == 2) {
+                return back()->with('error', 'Cannot modify date: check-in and check-out records exist.');
             }
-            // If only AM shift is selected, create PM attendance with default status
-            if ($validatedData['am_shift'] && !$validatedData['pm_shift']) {
-                
-                $attendanceInPm = new EmployeeAttendanceTimeIn();
-                $attendanceInPm->employee_id = $employees->id;
-                $attendanceInPm->check_in_time = $departmentWorkingHour ? ($departmentWorkingHour->morning_start_time ? $validatedData['selected_date'] . ' ' . $departmentWorkingHour->morning_start_time : $validatedData['selected_date']) : $validatedData['selected_date'] . ' 00:00:00';
-                $attendanceInPm->status = $selectedStatus;
-                $attendanceInPm->save();
 
-                $attendanceOutPm = new EmployeeAttendanceTimeOut();
-                $attendanceOutPm->employee_id = $employees->id;
-                $attendanceOutPm->check_out_time = $departmentWorkingHour ? ($departmentWorkingHour->morning_end_time ? $validatedData['selected_date'] . ' ' . $departmentWorkingHour->morning_end_time : $validatedData['selected_date']) : $validatedData['selected_date'] . ' 00:00:00';
-                $attendanceOutPm->status = $selectedStatus;
-                $attendanceOutPm->save();
-
-                // $attendanceInAm = new EmployeeAttendanceTimeIn();
-                // $attendanceInAm->employee_id = $employees->id;
-                // $attendanceInAm->check_in_time = $departmentWorkingHour ? ($departmentWorkingHour->afternoon_start_time ? $validatedData['selected_date'] . ' ' . $departmentWorkingHour->afternoon_start_time : $validatedData['selected_date']) : $validatedData['selected_date'] . ' 00:00:00';
-                // $attendanceInAm->status = $defaultStatus;
-                // $attendanceInAm->save();
-
-                // $attendanceOutAm = new EmployeeAttendanceTimeOut();
-                // $attendanceOutAm->employee_id = $employees->id;
-                // $attendanceOutAm->check_out_time = $departmentWorkingHour ? ($departmentWorkingHour->afternoon_end_time ? $validatedData['selected_date'] . ' ' . $departmentWorkingHour->afternoon_end_time : $validatedData['selected_date']) : $validatedData['selected_date'] . ' 00:00:00';
-                // $attendanceOutAm->status = $defaultStatus;
-                // $attendanceOutAm->save();
-
-                
-
-
-            }
-
-            // If only PM shift is selected, create AM attendance with default status
-            if (!$validatedData['am_shift'] && $validatedData['pm_shift']) {
-
-                // $attendanceInPm = new EmployeeAttendanceTimeIn();
-                // $attendanceInPm->employee_id = $employees->id;
-                // $attendanceInPm->check_in_time = $departmentWorkingHour ? ($departmentWorkingHour->morning_start_time ? $validatedData['selected_date'] . ' ' . $departmentWorkingHour->morning_start_time : $validatedData['selected_date']) : $validatedData['selected_date'] . ' 00:00:00';
-                // $attendanceInPm->status = $defaultStatus;
-                // $attendanceInPm->save();
-
-                // $attendanceOutPm = new EmployeeAttendanceTimeOut();
-                // $attendanceOutPm->employee_id = $employees->id;
-                // $attendanceOutPm->check_out_time = $departmentWorkingHour ? ($departmentWorkingHour->morning_end_time ? $validatedData['selected_date'] . ' ' . $departmentWorkingHour->morning_end_time : $validatedData['selected_date']) : $validatedData['selected_date'] . ' 00:00:00';
-                // $attendanceOutPm->status = $defaultStatus;
-                // $attendanceOutPm->save();
-                
-                $attendanceInAm = new EmployeeAttendanceTimeIn();
-                $attendanceInAm->employee_id = $employees->id;
-                $attendanceInAm->check_in_time = $departmentWorkingHour ? ($departmentWorkingHour->afternoon_start_time ? $validatedData['selected_date'] . ' ' . $departmentWorkingHour->afternoon_start_time : $validatedData['selected_date']) : $validatedData['selected_date'] . ' 00:00:00';
-                $attendanceInAm->status = $selectedStatus;
-                $attendanceInAm->save();
-
-                $attendanceOutAm = new EmployeeAttendanceTimeOut();
-                $attendanceOutAm->employee_id = $employees->id;
-                $attendanceOutAm->check_out_time = $departmentWorkingHour ? ($departmentWorkingHour->afternoon_end_time ? $validatedData['selected_date'] . ' ' . $departmentWorkingHour->afternoon_end_time : $validatedData['selected_date']) : $validatedData['selected_date'] . ' 00:00:00';
-                $attendanceOutAm->status = $selectedStatus;
-                $attendanceOutAm->save();
-
-
-                
-            }
-
-        } elseif ($checkInCount == 2 && $checkOutCount == 2) {
-            return back()->with('error', 'Cannot modify date: check-in and check-out records exist.');
+            //return redirect()->route('admin.attendance.employee_attendance')->with('success', 'Date Successfully modified!');
+            return back()->with('success', 'Half Day Leave Successfully Added!');
         }
 
-        //return redirect()->route('admin.attendance.employee_attendance')->with('success', 'Date Successfully modified!');
-        return back()->with('success', 'Half Day Leave Successfully Added!');
+        return redirect()->route('admin.attendance.employee_attendance')->with('error', 'Employee not found.');
     }
 
-    return redirect()->route('admin.attendance.employee_attendance')->with('error', 'Employee not found.');
-}
+
+
+    public function modifyAttendanceAbsent(Request $request)
+    {
+        // Validate the request data
+        $validatedData = $request->validate([
+            'selected_date' => 'required|date',
+            'status' => 'required|string',
+            'employee_id' => 'required|integer',
+            'day_of_week' => 'required|integer'
+        ]);
+ 
+
+        // // Convert checkbox values to boolean
+        // $validatedData['am_shift'] = $validatedData['am_shift'] === '1'; // Checkbox values might be '1' or '0'
+        // $validatedData['pm_shift'] = $validatedData['pm_shift'] === '1'; // Checkbox values might be '1' or '0'
+
+        $employee_id = $validatedData['employee_id'];
+        $employees = Employee::where('id', $employee_id)->first();
+
+        if ($employees) {
+            $dateOnly = Carbon::parse($validatedData['selected_date'])->format('Y-m-d');
+            $dayOfWeek = Carbon::parse($validatedData['selected_date'])->dayOfWeek;
+
+            // Check if there are already 2 check-in and 2 check-out records for the employee on the selected date
+            $checkInCount = EmployeeAttendanceTimeIn::where('employee_id', $employee_id)
+                ->whereDate('check_in_time', $dateOnly)
+                ->count();
+
+            $checkOutCount = EmployeeAttendanceTimeOut::where('employee_id', $employee_id)
+                ->whereDate('check_out_time', $dateOnly)
+                ->count();
+
+            if ($checkInCount == 0 && $checkOutCount == 0) {
+                $currentDayOfWeek = now()->dayOfWeek;
+
+                $attendanceIn = new EmployeeAttendanceTimeIn();
+                $attendanceIn->employee_id = $employee_id;
+                $attendanceIn->check_in_time = $validatedData['selected_date'] . ' 00:00:00';
+                $attendanceIn->status = $validatedData['status'];
+                $attendanceIn->save();
+
+                $attendanceIn = new EmployeeAttendanceTimeIn();
+                $attendanceIn->employee_id = $employee_id;
+                $attendanceIn->check_in_time = $validatedData['selected_date'] . ' 00:00:00';
+                $attendanceIn->status = $validatedData['status'];
+                $attendanceIn->save();
+
+                $attendance = new EmployeeAttendanceTimeOut();
+                $attendance->employee_id = $employee_id;
+                $attendance->check_out_time = $validatedData['selected_date'] . ' 00:00:00';
+                $attendance->status = $validatedData['status'];
+                $attendance->save();
+
+                $attendance = new EmployeeAttendanceTimeOut();
+                $attendance->employee_id = $employee_id;
+                $attendance->check_out_time = $validatedData['selected_date'] . ' 00:00:00';
+                $attendance->status = $validatedData['status'];
+                $attendance->save();
+
+                
+            } else {
+                return back()->with('error', 'Date exist!');
+            }
+            //return redirect()->route('admin.attendance.employee_attendance')->with('success', 'Date Successfully modified!');
+            return back()->with('success', ' Date successfully modified');
+        }
+
+        return redirect()->route('admin.attendance.employee_attendance')->with('error', 'Employee not found.');
+    }
 
 
 

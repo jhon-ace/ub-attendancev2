@@ -332,7 +332,7 @@
                                                 @mouseover="open = true"
                                                 @mouseleave="open = false"
                                             >
-                                                Modify Date for Approved Leave / Official Travel
+                                                Modify Date for Leave / Official Travel / Absent
                                             </button>
                                             <div 
                                                 x-show="open"
@@ -392,6 +392,10 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        <!-- <button wire:click="generatePDFAttendance" wire:loading.attr="disabled" 
+                                                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-2 rounded mb-2">
+                                                <i class="fa-solid fa-file"></i> Mark Date as Absent
+                                        </button> -->
                                     </div>
                                     <!-- Table for Time In -->
                                     <div class="flex justify-between">
@@ -1776,11 +1780,14 @@
                                         <div x-data="{ activeTab: 'form2' }" class="w-[50%] mb-4 mx-auto mt-8">
                                             <!-- Tabs -->
                                             <div class="flex justify-between mb-4">
-                                                <button @click="activeTab = 'form1'" :class="{'bg-blue-500 text-white': activeTab === 'form1'}" class="w-[48%] py-2 px-4 rounded-md text-center border border-black">
+                                                <button @click="activeTab = 'form1'" :class="{'bg-blue-500 text-white': activeTab === 'form1'}" class="mr-5 w-[50%] py-2 px-4 rounded-md text-center border border-black">
                                                     For Half Day Leave
                                                 </button>
-                                                <button @click="activeTab = 'form2'" :class="{'bg-blue-500 text-white': activeTab === 'form2'}" class="w-[48%] py-2 px-4 rounded-md text-center border border-black">
+                                                <button @click="activeTab = 'form2'" :class="{'bg-blue-500 text-white': activeTab === 'form2'}" class="mr-5 w-[50%] py-2 px-4 rounded-md text-center border border-black">
                                                     For Full Day Leave
+                                                </button>
+                                                <button @click="activeTab = 'form3'" :class="{'bg-blue-500 text-white': activeTab === 'form3'}" class="w-[50%] py-2 px-4 rounded-md text-center border border-black">
+                                                    For Absent / For Weekend
                                                 </button>
                                             </div>
 
@@ -1898,6 +1905,69 @@
                                                         </button>
                                                     </div>
                                                 </form>
+                                            </div>
+
+
+                                            <div x-show="activeTab === 'form3'" class="w-full">
+                                                
+                                                <form action="{{ route('admin_staff.attendance.modify.absent') }}" method="POST" class="w-full">
+                                                    <x-caps-lock-detector />
+                                                    @csrf
+
+                                                    <br>
+                                                         <p class="text-[14px]">
+                                                            <text class="text-red-500">Note:</text> This is only for full day absent marking / weekend marking.
+                                                        </p>
+                                                    <br>
+                                                    <div class="mb-2 hidden">
+                                                        <label for="selected-date" class="block mb-2 text-left">Employee:</label>
+                                                        <input type="text" name="employee_id" value="{{ $selectedEmployeeToShow->id }}" class="block mx-auto mb-4 p-2 border border-gray-300 rounded w-full max-w-md">
+                                                    </div>
+
+                                                    <div x-data="{ selectedDate: '', dayOfWeekNumber: '' }" class="mb-2">
+                                                        <label for="selected-date" class="block mb-2 text-left">Select a Date:</label>
+                                                        <input 
+                                                            type="date" 
+                                                            id="selected-date" 
+                                                            name="selected_date" 
+                                                            class="block mx-auto mb-4 p-2 border border-gray-300 rounded w-full"
+                                                            x-model="selectedDate"
+                                                            @change="dayOfWeekNumber = new Date(selectedDate).getDay()"
+                                                            wire:model="selected_date"
+                                                        >
+
+                                                        <div class="">
+                                                            <label for="day-of-week" class="block mb-2 text-left">Day of the Week:</label>
+                                                            <input 
+                                                                type="text" 
+                                                                id="day-of-week" 
+                                                                name="day_of_week" 
+                                                                class="block mx-auto mb-4 p-2 border border-gray-300 rounded w-full"
+                                                                x-model="dayOfWeekNumber"
+                                                                readonly
+                                                                wire:model="dayOfTheWeek"
+                                                            >
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="mb-4">
+                                                        <label for="status" class="block text-gray-700 text-md font-bold mb-2 text-left">Status:</label>
+                                                        <select id="status" name="status" class="shadow appearance-none border rounded w-full py-2 px-3 text-black leading-tight focus:outline-none focus:shadow-outline" required readonly>
+                                                            <option selected>Select Status</option>
+                                                            <option value="Absent">Absent</option>
+                                                            <option value="Weekend">Weekend</option>
+                                                        </select>
+                                                        
+                                                    </div>
+
+                                                    <div class="flex mb-4 mt-10 justify-center">
+                                                        <button type="submit" class="w-80 bg-blue-500 text-white px-4 py-2 rounded-md">
+                                                            Submit
+                                                        </button>
+                                                    </div>
+                                                </form>
+
+
                                             </div>
                                         </div>
                                     </div>
