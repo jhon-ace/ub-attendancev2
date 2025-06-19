@@ -1285,6 +1285,8 @@
                                                                 <hr style="border: none; border-top: 1px solid #000;" class="mb-2">
                                                                 {{ $finalHoursPM }} hrs. {{ $finalMinutesPM }} min. {{ $finalSecondsPM }} sec.
                                                             </div>
+                                                            
+                                                        
                                                         @else
                                                             <p>0</p>
                                                         @endif
@@ -1934,6 +1936,7 @@
                                                             x-model="selectedDate"
                                                             @change="dayOfWeekNumber = new Date(selectedDate).getDay()"
                                                             wire:model="selected_date"
+                                                            required
                                                         >
 
                                                         <div class="">
@@ -1946,14 +1949,15 @@
                                                                 x-model="dayOfWeekNumber"
                                                                 readonly
                                                                 wire:model="dayOfTheWeek"
+                                                                required
                                                             >
                                                         </div>
                                                     </div>
 
                                                     <div class="mb-4">
                                                         <label for="status" class="block text-gray-700 text-md font-bold mb-2 text-left">Status:</label>
-                                                        <select id="status" name="status" class="shadow appearance-none border rounded w-full py-2 px-3 text-black leading-tight focus:outline-none focus:shadow-outline" required readonly>
-                                                            <option selected>Select Status</option>
+                                                        <select id="status" name="status" class="shadow appearance-none border rounded w-full py-2 px-3 text-black leading-tight focus:outline-none focus:shadow-outline" required>
+                                                            <option value="">Select Status</option>
                                                             <option value="Absent">Absent</option>
                                                             <option value="Weekend">Weekend</option>
                                                         </select>
@@ -3247,7 +3251,7 @@
                                                                                                             $modify_status == "On-campus"
                                                                                                         ) {
                                                                                                             $remarkss = 'Invalid Attendance';
-                                                                                                        }
+                                                                                                        } 
                                                                                                         
                                                                                                         else {
                                                                                                             if ($totalHoursPM == null && $totalMinutesPM == null && $totalHoursAM == 0 && $totalMinutesAM == 0 && $modify_status == "Weekend") {
