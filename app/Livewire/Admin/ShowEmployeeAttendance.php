@@ -823,7 +823,7 @@ class ShowEmployeeAttendance extends Component
                                         $checkOutTime = new DateTime($firstCheckOut->check_out_time);
 
                                         // AM session rule: check-in in AM, check-out before 2:00 PM
-                                        if ($checkInTime->format('a') === 'am') {
+                                        if ($checkInTime->format('a') === 'am' && $checkOutTime->format('a') === 'pm') {
                                             $amEndTime = new DateTime($dateKey1 . ' 14:00:00');
 
                                             if ($checkOutTime < $amEndTime) {
@@ -1046,7 +1046,7 @@ class ShowEmployeeAttendance extends Component
 
                                 // Calculate PM hours if applicable
 
-
+                                $hoursWorkedPM = 0;
                                 // // Handle first session (first check-in and first check-out)
                                 if ($firstCheckIn && $firstCheckOut) {
                                     $firstInTime = Carbon::parse($firstCheckIn->check_in_time);
