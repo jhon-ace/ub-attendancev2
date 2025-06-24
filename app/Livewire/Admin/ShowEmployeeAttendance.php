@@ -2576,7 +2576,7 @@ class ShowEmployeeAttendance extends Component
                 'attendanceTimeIn' => $attendanceTimeIn,
                 'attendanceTimeOut' => $attendanceTimeOut,
                 'selectedEmployeeToShow' => $this->selectedEmployeeToShow,
-            ])->setPaper('portrait', 'landscape'); // Set paper size and orientation
+            ])->setPaper('A4', 'portrait'); // Set paper size and orientation
 
              $pdf->save($savePath . '/' . $filename);
 

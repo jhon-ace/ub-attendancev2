@@ -39,7 +39,7 @@
             background-color: #f2f2f2;
         }
         .table-container .table2 {
-            width: 60%;
+            width: 40%;
             border-collapse: collapse;
           
             margin-right: 5px; /* Add some margin between tables */
@@ -79,7 +79,7 @@
 </head>
 <body>
     <img src="{{ asset('assets/img/unnamed.png') }}" alt="">
-    <h3 style="margin-top:18px;font-size:15px">EMPLOYEE ATTENDANCE - DAILY TIME RECORD</h3>
+    <h3 style="margin-top:12px;margin-bottom:12 px;font-size:15px">EMPLOYEE ATTENDANCE - DAILY TIME RECORD</h3>
     <span>Employee: <text style="color:red;font-size:12px">{{ $selectedEmployeeToShow->employee_lastname }}, {{ $selectedEmployeeToShow->employee_firstname }} {{ $selectedEmployeeToShow->employee_middlename }}</text></span><br>
     <span>Employee ID: <text style="color:red;font-size:12px">{{ $selectedEmployeeToShow->employee_id }}</text></span>
     @if ($selectedStartDate && $selectedEndDate)
@@ -162,6 +162,8 @@
                             $isWeekend = $status === 'Weekend' && $allCheckInsAtMidnight && $allCheckOutsAtMidnight;
                             $isAbsent = $status === 'Absent';
                             $isHoliday = $status === 'Holiday';
+                            $isOnLeave = $status === 'On Leave';
+                            $isOfficialTravel = $status === 'Official Travel';
                         @endphp
                         <tr>
                             <td style="margin-top:5px">{{ $employeeId }}</td>
@@ -169,41 +171,91 @@
 
                             {{-- Time In --}}
                             <td style="vertical-align: top;">
-                                @if ($isHoliday)
-                                    <div style="color:blue; font-weight:bold;">-</div>
+                                @if ($isOnLeave) 
+                                    <div style="text-transform:uppercase;color:red">On Leave</div>
+                                @elseif ($isOfficialTravel)
+                                    <div style="text-transform:uppercase;color:red">Official Travel</div>
+                                @elseif ($isHoliday)
+                                    <div style="color:blue; font-weight:bold;">Holiday</div>
                                 @elseif ($isWeekend)
                                     <div style="text-transform:uppercase;color:red">Weekend</div>
-                                @elseif ($isAbsent)
-                                    <div style="text-transform:uppercase;color:red">Absent</div>
                                 @else
-                                    @php $maxRows = max($checkIns->count(), $checkOuts->count()); @endphp
-                                    @for ($i = 0; $i < $maxRows; $i++)
-                                        <div>{{ $checkIns[$i] ?? '-' }}</div>
-                                        @if ($i < $maxRows - 1)
-                                            <hr style="border: none; border-top: 1px solid black; margin: 4px 0;">
-                                        @endif
-                                    @endfor
+                                    @php
+                                        $validCheckIns = $checkIns->filter(fn($in) => $in !== '12:00:00 AM')->values();
+                                        $validCheckOuts = $checkOuts->filter(fn($out) => $out !== '12:00:00 AM')->values();
+                                        $allInAtMidnight = $checkIns->count() >= 2 && $checkIns->every(fn($in) => $in === '12:00:00 AM');
+                                        $allOutAtMidnight = $checkOuts->count() >= 2 && $checkOuts->every(fn($out) => $out === '12:00:00 AM');
+                                        $singleInSingleOut = $validCheckIns->count() === 1 && $validCheckOuts->count() === 1;
+                                    @endphp
+
+                                    @if ($isAbsent || ($validCheckIns->isEmpty() && $allInAtMidnight && $allOutAtMidnight))
+                                        <div></div>
+                                        <hr style="border: none; border-top: 1px solid black; margin: 20px 0;">
+                                        <div></div>
+                                    @elseif ($validCheckIns->isEmpty())
+                                        <div></div>
+                                    @elseif ($singleInSingleOut)
+                                        <div>{{ $validCheckIns[0] }}</div>
+                                    @else
+                                        @foreach ($validCheckIns as $index => $in)
+                                            <div>{{ $in }}</div>
+                                            @if ($index < $validCheckIns->count() - 1)
+                                                <hr style="border: none; border-top: 1px solid black; margin: 4px 0;">
+                                            @endif
+                                        @endforeach
+                                    @endif
+                                @endif
+                            </td>
+                            {{-- Time Out --}}
+                            <td style="vertical-align: top;">
+                                @if ($isOnLeave) 
+                                    <div style="text-transform:uppercase;color:red">On Leave</div>
+                                @elseif ($isOfficialTravel)
+                                    <div style="text-transform:uppercase;color:red">Official Travel</div>
+                                @elseif ($isHoliday)
+                                    <div style="color:blue; font-weight:bold;">Holiday</div>
+                                @elseif ($isWeekend)
+                                    <div style="text-transform:uppercase;color:red">Weekend</div>
+                                @else
+                                    @php
+                                        $validCheckIns = $checkIns->filter(fn($in) => $in !== '12:00:00 AM')->values();
+                                        $validCheckOuts = $checkOuts->filter(fn($out) => $out !== '12:00:00 AM')->values();
+                                        $allOutAtMidnight = $checkOuts->count() >= 2 && $checkOuts->every(fn($out) => $out === '12:00:00 AM');
+                                        $allInAtMidnight = $checkIns->count() >= 2 && $checkIns->every(fn($in) => $in === '12:00:00 AM');
+                                        $singleInSingleOut = $validCheckIns->count() === 1 && $validCheckOuts->count() === 1;
+                                    @endphp
+
+                                    @if ($isAbsent || ($validCheckOuts->isEmpty() && $allOutAtMidnight && $allInAtMidnight))
+                                        <div></div>
+                                        <hr style="border: none; border-top: 1px solid black; margin: 20px 0;">
+                                        <div></div>
+                                    @elseif ($allOutAtMidnight)
+                                        @for ($i = 0; $i < $checkOuts->count(); $i++)
+                                            <div></div>
+                                            @if ($i < $checkOuts->count() - 1)
+                                                <hr style="border: none; border-top: 1px solid black; margin: 15px 0;">
+                                            @endif
+                                        @endfor
+                                    @elseif ($singleInSingleOut)
+                                        <div>{{ $validCheckOuts[0] }}</div>
+                                    @elseif ($validCheckOuts->count() === 1)
+                                        <div>{{ $validCheckOuts[0] }}</div>
+                                        <hr style="border: none; border-top: 1px solid black; margin: 4px 0;">
+                                    @else
+                                        @foreach ($validCheckOuts as $index => $out)
+                                            <div>{{ $out }}</div>
+                                            @if ($index < $validCheckOuts->count() - 1)
+                                                <hr style="border: none; border-top: 1px solid black; margin: 4px 0;">
+                                            @endif
+                                        @endforeach
+                                    @endif
                                 @endif
                             </td>
 
-                            {{-- Time Out --}}
-                            <td style="vertical-align: top;">
-                                @if ($isHoliday)
-                                    <div style="color:blue; font-weight:bold;">-</div>
-                                @elseif ($isWeekend)
-                                    <div style="text-transform:uppercase;color:red">Weekend</div>
-                                @elseif ($isAbsent)
-                                    <div style="text-transform:uppercase;color:red">Absent</div>
-                                @else
-                                    @php $maxRows = max($checkIns->count(), $checkOuts->count()); @endphp
-                                    @for ($i = 0; $i < $maxRows; $i++)
-                                        <div>{{ $checkOuts[$i] ?? '-' }}</div>
-                                        @if ($i < $maxRows - 1)
-                                            <hr style="border: none; border-top: 1px solid black; margin: 4px 0;">
-                                        @endif
-                                    @endfor
-                                @endif
-                            </td>
+
+
+
+
                         </tr>
 
                     @endforeach
@@ -213,27 +265,52 @@
 
             </tbody>
         </table>
-        <br><br>
+        <br>
 
-        <div style="text-align: center; margin-top: 40px;">
-            <div style="margin-bottom: 50px;">
-                <div style="font-weight: bold; margin-bottom: 5px;">
-                    {{ $selectedEmployeeToShow->employee_lastname }}, {{ $selectedEmployeeToShow->employee_firstname }} {{ $selectedEmployeeToShow->employee_middlename }}
-                </div>
-                <div style="border-top: 1px solid black; width: 250px; margin: 0 auto;"></div>
-                <div style="margin-top: 5px; font-weight: bold;">
-                    Name of Employee
-                </div>
+            <div style="font-weight: bold;text-align:left">REMARKS:</div>
+            <div style="margin-top: 10px;">
+                <div style="border-bottom: 1px solid black; height: 20px;"></div>
+                <div style="border-bottom: 1px solid black; height: 20px;"></div>
+                <div style="border-bottom: 1px solid black; height: 20px;"></div>
+                <div style="border-bottom: 1px solid black; height: 20px;"></div>
             </div>
-
-            <div>
-                <div style="margin-bottom: 5px;">Dean/Office Head</div>
-                <div style="border-top: 1px solid black; width: 250px; margin: 0 auto;"></div>
+        
+            
+       <div style="margin-top: 10px; font-size: 14px;">
+            <div style="margin-top: 40px;">
+                <table style="width: 100%; font-size: 14px; text-align: center; border-collapse: collapse;border:none">
+                    <tr>
+                        <td style="width: 33%; height: 50px;">{{ $selectedEmployeeToShow->employee_lastname }}, {{ $selectedEmployeeToShow->employee_firstname }} {{ $selectedEmployeeToShow->employee_middlename }}</td>
+                        <td style="width: 33%; height: 50px;"></td>
+                        <td style="width: 33%; height: 50px;"></td>
+                    </tr>
+                    <tr>
+                        <td>Name of Employee</td>
+                        <td>Dean/Office Head</td>
+                        <td>Vice President</td>
+                    </tr>
+                   
+                    <tr style="margin-top:5px">
+                        <td colspan="3" style="text-align: center; padding-top: 40px;">
+                            <strong>PRESCIOUS JOY D. BAGUIO, MPM &nbsp;&nbsp; RIA EVA M. SEVILLA, MAHESOS, MPA</strong><br>
+                            <span style="font-size: 13px;">Human Resource Manager / Vice President for Administration</span>
+                        </td>
+                    </tr>
+                </table>
             </div>
         </div>
 
 
+
+
+        
+
+
+
     </div>
+   
+
     </center>
+
 </body>
 </html>
