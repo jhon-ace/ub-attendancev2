@@ -74,12 +74,16 @@
         margin-right: 10px; /* Optional: Add some margin to separate the content from the border */
     }
 
+    .was{
+        border:0;
+    }
+
     </style>
      @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body>
-    <img src="{{ asset('assets/img/unnamed.png') }}" alt="">
-    <h3 style="margin-top:12px;margin-bottom:12 px;font-size:15px">EMPLOYEE ATTENDANCE - DAILY TIME RECORD</h3>
+    <img src="{{ asset('assets/img/newHeader.png') }}" alt="">
+    <h3 style="margin-top:10px;margin-bottom:15px;font-size:15px">EMPLOYEE ATTENDANCE - DAILY TIME RECORD</h3>
     <span>Employee: <text style="color:red;font-size:12px">{{ $selectedEmployeeToShow->employee_lastname }}, {{ $selectedEmployeeToShow->employee_firstname }} {{ $selectedEmployeeToShow->employee_middlename }}</text></span><br>
     <span>Employee ID: <text style="color:red;font-size:12px">{{ $selectedEmployeeToShow->employee_id }}</text></span>
     @if ($selectedStartDate && $selectedEndDate)
@@ -196,6 +200,8 @@
                                         <div></div>
                                     @elseif ($singleInSingleOut)
                                         <div>{{ $validCheckIns[0] }}</div>
+                                        <hr style="border: none; border-top: 1px solid black; margin: 4px 0;">
+                                        <div style="height: 20px;"></div>
                                     @else
                                         @foreach ($validCheckIns as $index => $in)
                                             <div>{{ $in }}</div>
@@ -238,6 +244,8 @@
                                         @endfor
                                     @elseif ($singleInSingleOut)
                                         <div>{{ $validCheckOuts[0] }}</div>
+                                        <hr style="border: none; border-top: 1px solid black; margin: 4px 0;">
+                                        <div style="height: 20px;"></div>
                                     @elseif ($validCheckOuts->count() === 1)
                                         <div>{{ $validCheckOuts[0] }}</div>
                                         <hr style="border: none; border-top: 1px solid black; margin: 4px 0;">
@@ -278,27 +286,39 @@
             
        <div style="margin-top: 10px; font-size: 14px;">
             <div style="margin-top: 40px;">
-                <table style="width: 100%; font-size: 14px; text-align: center; border-collapse: collapse;border:none">
+                <!-- First Table: Employee Info -->
+                <table style="width: 100%; font-size: 14px; text-align: center; border-collapse: collapse; border: 1px solid black;margin: 0; padding: 0;">
                     <tr>
-                        <td style="width: 33%; height: 50px;">{{ $selectedEmployeeToShow->employee_lastname }}, {{ $selectedEmployeeToShow->employee_firstname }} {{ $selectedEmployeeToShow->employee_middlename }}</td>
+                        <td style="width: 33%; height: 50px;">
+                            {{ $selectedEmployeeToShow->employee_lastname }}, {{ $selectedEmployeeToShow->employee_firstname }} {{ $selectedEmployeeToShow->employee_middlename }}
+                        </td>
                         <td style="width: 33%; height: 50px;"></td>
                         <td style="width: 33%; height: 50px;"></td>
                     </tr>
                     <tr>
-                        <td>Name of Employee</td>
-                        <td>Dean/Office Head</td>
-                        <td>Vice President</td>
+                        <td style="padding-bottom:10px;">Name of Employee</td>
+                        <td style="padding-bottom:10px">Dean/Office Head</td>
+                        <td style="padding-bottom:10px">Vice President</td>
                     </tr>
-                   
-                    <tr style="margin-top:5px">
-                        <td colspan="3" style="text-align: center; padding-top: 40px;">
-                            <strong>PRESCIOUS JOY D. BAGUIO, MPM &nbsp;&nbsp; RIA EVA M. SEVILLA, MAHESOS, MPA</strong><br>
-                            <span style="font-size: 13px;">Human Resource Manager / Vice President for Administration</span>
+                </table>
+
+                <!-- Second Table: Signature Block -->
+                <table style="width: 100%; margin-top: 0px; font-size: 14px; text-align: center; border-collapse: collapse; border: 1px solid black;margin: 0; padding: 0;">
+                    <tr>
+                        <td style="width: 33.33%; padding-top: 60px;padding-bottom:10px">
+                            <strong>PRESCIOUS JOY D. BAGUIO, MPM</strong><br>
+                            <span style="font-size: 13px;">Human Resource Manager</span>
+                        </td>
+                        <td style="width: 33.33%; padding-top: 60px;padding-bottom:10px">
+                            <strong>RIA EVA M. SEVILLA, MAHESOS, MPA</strong><br>
+                            <span style="font-size: 13px;">Vice President for Administration</span>
                         </td>
                     </tr>
                 </table>
+
             </div>
         </div>
+
 
 
 

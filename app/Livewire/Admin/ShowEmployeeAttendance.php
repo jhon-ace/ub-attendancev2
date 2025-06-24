@@ -34,8 +34,8 @@ class ShowEmployeeAttendance extends Component
     public $sortField = 'employee_id';
     public $sortDirection = 'asc';
     public $selectedSchool = null;
-    public $selectedDepartment4 = 1;
-    public $selectedEmployee = null;
+    public $selectedDepartment4 = 2;
+    public $selectedEmployee = 1;
     public $departmentsToShow;
     public $schoolToShow;
     public $departmentToShow;
