@@ -41,8 +41,8 @@ class DisplayDataforPayroll extends Component
     public $departmentToShow;
     public $attendancesToShow;
     public $selectedEmployeeToShow;
-    public $startDate = null;
-    public $endDate = null;
+    public $startDate = 1;
+    public $endDate = 15;
     public $selectedStartDate = null;
     public $selectedEndDate = null;
     public $selectedAttendanceByDate;
@@ -112,30 +112,30 @@ class DisplayDataforPayroll extends Component
 
     public function updateYear()
     {
-        if ($this->selectedYear) {
-            $this->attendancesToShow = EmployeeAttendanceTimeIn::where('employee_id', $this->selectedEmployee)
-                ->where('status', '!=', 'Holiday')
-                ->whereYear('check_in_time', $this->selectedYear) // Filter by selected year
-                ->whereMonth('check_in_time', $this->selectedMonth) // Filter by selected month
-                ->get();
+        // if ($this->selectedYear) {
+        //     $this->attendancesToShow = EmployeeAttendanceTimeIn::where('employee_id', $this->selectedEmployee)
+        //         ->where('status', '!=', 'Holiday')
+        //         ->whereYear('check_in_time', $this->selectedYear) // Filter by selected year
+        //         ->whereMonth('check_in_time', $this->selectedMonth) // Filter by selected month
+        //         ->get();
 
            
 
-            // Fetch corresponding time-out records
-            $this->attendancesToShow = EmployeeAttendanceTimeOut::where('employee_id', $this->selectedEmployee)
-                ->where('status', '!=', 'Holiday')
-                ->whereYear('check_out_time', $this->selectedYear) // Filter by selected year
-                ->whereMonth('check_out_time', $this->selectedMonth) // Filter by selected month
-                ->get();
+        //     // Fetch corresponding time-out records
+        //     $this->attendancesToShow = EmployeeAttendanceTimeOut::where('employee_id', $this->selectedEmployee)
+        //         ->where('status', '!=', 'Holiday')
+        //         ->whereYear('check_out_time', $this->selectedYear) // Filter by selected year
+        //         ->whereMonth('check_out_time', $this->selectedMonth) // Filter by selected month
+        //         ->get();
 
-        } else {
+        // } else {
             $this->selectedYear = now()->year;
-        }
+        // }
     }
 
     public function updateMonth()
     {   
-        
+            
         if ($this->selectedMonth && $this->startDate && $this->endDate) {
             // Get time-in records for the selected employee and month
             $this->attendancesToShow = EmployeeAttendanceTimeIn::where('employee_id', $this->selectedEmployee)
@@ -152,6 +152,7 @@ class DisplayDataforPayroll extends Component
                 ->get();
 
         } else if($this->selectedMonth){
+      
             $this->attendancesToShow = EmployeeAttendanceTimeIn::where('employee_id', $this->selectedEmployee)
                 ->where('status', '!=', 'Holiday')
                 ->whereYear('check_in_time', $this->selectedYear)
@@ -511,10 +512,10 @@ $queryTimeOut->whereIn('employee_id', $employeeIds);
 
         } else {
             $queryTimeIn->whereDay('check_in_time', '>=', 1)
-                        ->whereDay('check_in_time', '<=', 31);
+                        ->whereDay('check_in_time', '<=', 15);
 
             $queryTimeOut->whereDay('check_out_time', '>=', 1)
-                        ->whereDay('check_out_time', '<=', 31);
+                        ->whereDay('check_out_time', '<=', 15);
 
             $currentMonth = $this->selectedMonth;  // Get the current month
             $currentYear = $this->selectedYear;    // Get the current year

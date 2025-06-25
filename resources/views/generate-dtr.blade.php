@@ -202,6 +202,11 @@
                                         <div>{{ $validCheckIns[0] }}</div>
                                         <hr style="border: none; border-top: 1px solid black; margin: 4px 0;">
                                         <div style="height: 20px;"></div>
+                                    @elseif ($validCheckIns->count() === 1)
+                                        {{-- Only one time-in: show time + hr + blank space --}}
+                                        <div>{{ $validCheckIns[0] }}</div>
+                                        <hr style="border: none; border-top: 1px solid black; margin: 4px 0;">
+                                        <div style="height: 20px;"></div>
                                     @else
                                         @foreach ($validCheckIns as $index => $in)
                                             <div>{{ $in }}</div>
@@ -212,6 +217,7 @@
                                     @endif
                                 @endif
                             </td>
+                            
                             {{-- Time Out --}}
                             <td style="vertical-align: top;">
                                 @if ($isOnLeave) 
@@ -229,26 +235,37 @@
                                         $allOutAtMidnight = $checkOuts->count() >= 2 && $checkOuts->every(fn($out) => $out === '12:00:00 AM');
                                         $allInAtMidnight = $checkIns->count() >= 2 && $checkIns->every(fn($in) => $in === '12:00:00 AM');
                                         $singleInSingleOut = $validCheckIns->count() === 1 && $validCheckOuts->count() === 1;
+                                        $oneInZeroOut = $validCheckIns->count() === 1 && $validCheckOuts->isEmpty();
                                     @endphp
 
                                     @if ($isAbsent || ($validCheckOuts->isEmpty() && $allOutAtMidnight && $allInAtMidnight))
                                         <div></div>
                                         <hr style="border: none; border-top: 1px solid black; margin: 20px 0;">
                                         <div></div>
+
                                     @elseif ($allOutAtMidnight)
                                         @for ($i = 0; $i < $checkOuts->count(); $i++)
                                             <div></div>
                                             @if ($i < $checkOuts->count() - 1)
-                                                <hr style="border: none; border-top: 1px solid black; margin: 15px 0;">
+                                                <hr style="border: none; border-top: 1px solid black; margin: 25px 0;">
                                             @endif
                                         @endfor
+
+                                    @elseif ($oneInZeroOut)
+                                        {{-- Show blank for manual time-out --}}
+                                        <div></div>
+                                        <hr style="border: none; border-top: 1px solid black; margin: 25px 0;">
+                                        
+
                                     @elseif ($singleInSingleOut)
                                         <div>{{ $validCheckOuts[0] }}</div>
                                         <hr style="border: none; border-top: 1px solid black; margin: 4px 0;">
                                         <div style="height: 20px;"></div>
+
                                     @elseif ($validCheckOuts->count() === 1)
                                         <div>{{ $validCheckOuts[0] }}</div>
                                         <hr style="border: none; border-top: 1px solid black; margin: 4px 0;">
+
                                     @else
                                         @foreach ($validCheckOuts as $index => $out)
                                             <div>{{ $out }}</div>
@@ -259,6 +276,7 @@
                                     @endif
                                 @endif
                             </td>
+
 
 
 
