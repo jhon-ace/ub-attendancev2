@@ -193,9 +193,10 @@
                                     @endphp
 
                                     @if ($isAbsent || ($validCheckIns->isEmpty() && $allInAtMidnight && $allOutAtMidnight))
-                                        <div></div>
-                                        <hr style="border: none; border-top: 1px solid black; margin: 20px 0;">
-                                        <div></div>
+                                        <!-- <div></div>
+                                        <hr style="border: none; border-top: 1px solid black; margin: 20px 0;"> -->
+                                   
+                                        <div style="color:red">ABSENT</div>
                                     @elseif ($validCheckIns->isEmpty())
                                         <div></div>
                                     @elseif ($singleInSingleOut)
@@ -239,10 +240,10 @@
                                     @endphp
 
                                     @if ($isAbsent || ($validCheckOuts->isEmpty() && $allOutAtMidnight && $allInAtMidnight))
-                                        <div></div>
+                                        <!-- <div></div>
                                         <hr style="border: none; border-top: 1px solid black; margin: 20px 0;">
-                                        <div></div>
-
+                                        <div></div> -->
+                                        <div style="color:red">ABSENT</div>
                                     @elseif ($allOutAtMidnight)
                                         @for ($i = 0; $i < $checkOuts->count(); $i++)
                                             <div></div>
@@ -253,6 +254,7 @@
 
                                     @elseif ($oneInZeroOut)
                                         {{-- Show blank for manual time-out --}}
+                                        <!-- <div style="color:red">ABSENT</div> -->
                                         <div></div>
                                         <hr style="border: none; border-top: 1px solid black; margin: 25px 0;">
                                         
@@ -324,7 +326,7 @@
                 <table style="width: 100%; margin-top: 0px; font-size: 14px; text-align: center; border-collapse: collapse; border: 1px solid black;margin: 0; padding: 0;">
                     <tr>
                         <td style="width: 33.33%; padding-top: 60px;padding-bottom:10px">
-                            <strong>PRESCIOUS JOY D. BAGUIO, MPM</strong><br>
+                            <strong>PRECIOUS JOY D. BAGUIO, MPM</strong><br>
                             <span style="font-size: 13px;">Human Resource Manager</span>
                         </td>
                         <td style="width: 33.33%; padding-top: 60px;padding-bottom:10px">

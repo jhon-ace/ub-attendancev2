@@ -1003,7 +1003,7 @@
                                                                     <i class="fa-solid fa-file"></i> Generate PDF 
                                                                 </button>
                                                             </div>
-                                                            <div wire:loading wire:target="generatePDF" class="fixed inset-0 flex justify-center items-center bg-gray-500 bg-opacity-50 z-50">
+                                                            <!-- <div wire:loading wire:target="generatePDF" class="fixed inset-0 flex justify-center items-center bg-gray-500 bg-opacity-50 z-50">
                                                                 <div class="h-full flex mx-auto justify-center items-center space-x-2 bg-opacity-50 p-6 rounded shadow-lg">
                                                                     <div class="flex flex-col items-center">
                                                                         <div class="w-8 h-8 border-4 border-t-transparent border-blue-500 rounded-full animate-spin"></div>
@@ -1018,7 +1018,7 @@
                                                                         <span class="text-center mt-3 text-white">Processing Export of Excel file...</span>
                                                                     </div>
                                                                 </div>
-                                                            </div>
+                                                            </div> -->
                                                         @endempty
                                                     @endif
                                                     

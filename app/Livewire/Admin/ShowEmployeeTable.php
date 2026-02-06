@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Livewire\Admin;
-
+ 
 use \App\Models\Admin\Employee; 
 use \App\Models\Admin\School; 
 use \App\Models\Admin\Department; 

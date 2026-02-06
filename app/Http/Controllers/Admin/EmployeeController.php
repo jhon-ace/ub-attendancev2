@@ -188,6 +188,7 @@ class EmployeeController extends Controller
             $extension = $request->file('employee_photo')->getClientOriginalExtension();
             $fileNameToStore = $filename . '_' . time() . '.' . $extension;
             $path = $request->file('employee_photo')->storeAs('public/employee_photo', $fileNameToStore);
+           
         } else {
             $fileNameToStore = $employee->employee_photo; // Keep the current photo if no new photo is uploaded
         }
@@ -206,6 +207,7 @@ class EmployeeController extends Controller
             $employee->employee_lastname = $request->input('employee_lastname');
             $employee->employee_rfid = $request->input('employee_rfid');
             $employee->employee_photo = $fileNameToStore;
+            
             $employee->save();
 
 

@@ -140,7 +140,7 @@ class ShowEmployeeAttendance extends Component
 
     public function updateYear()
     {
-        if ($this->selectedYear) {
+        if ($this->selectedYear && $this->selectedMonth ) {
             $this->attendancesToShow = EmployeeAttendanceTimeIn::where('employee_id', $this->selectedEmployee)
                 ->where('status', '!=', 'Holiday')
                 ->whereYear('check_in_time', $this->selectedYear) // Filter by selected year
@@ -697,6 +697,7 @@ class ShowEmployeeAttendance extends Component
                     
                     $gracePeriodFirst = GracePeriod::first();
                     if($gracePeriodFirst){
+                    
                         $gracePeriodValue = (float) $gracePeriodFirst->grace_period;
                         // AM Shift Calculation  for 15 mins interval of declaring late
         
@@ -755,80 +756,24 @@ class ShowEmployeeAttendance extends Component
                                     ->skip(1)
                                     ->first();
                                     
-                                    // // Calculate PM hours if applicable
-                                    // if($firstCheckIn) {
-                                         
-                                    //     if ($checkInnCount->get($dateKey1, 0) == 1 && $checkOuttCount->get($dateKey2, 0) == 1) {
-                                            
-                                    //         if ($firstCheckIn && $firstCheckOut) {
-                                    //             $checkInTime = new DateTime($firstCheckIn->check_in_time);
-                                    //             $checkOutTime = new DateTime($firstCheckOut->check_out_time);
-
-                                    //             // Ensure check-in is PM and check-out is also PM
-                                    //             if ($checkInTime->format('a') === 'am' && $checkOutTime->format('a') === 'pm') {
-                                    //                 $amEndTime = new DateTime($dateKey1 . ' 14:00:00');
-                                    //                 if ($checkOutTime < $amEndTime) {
-                                    //                 // Calculate the interval between the check-out time and 1:00 PM
-                                    //                 //so naa cutoff ang checkout sa buntag 1 pwedi i set $amEndTime
-                                    //                 $intervalAM = $effectiveCheckInTime->diff($effectiveCheckOutTime);
-                                    //                 // $hoursWorkedAM = $intervalAM->h + ($intervalAM->i / 60) + ($intervalAM->s / 3600);
-                                                    
-                                    //                 $hoursWorkedAM = $intervalAM->h + ($intervalAM->i / 60) + ($intervalAM->s / 3600);
-
-                                    //                 }else{
-                                    //                     $hoursWorkedAM = 0;
-                                    //                 }
-                                    //             }
-                                    //             else {
-                                    //                 // $hoursWorkedAM = 0;
-                                    //             }
-                                    //         } else {
-                                    //             $hoursWorkedAM = 0;
-                                    //         }
-                                    //     }
-                                    
-                                    //     else {
-                                                
-                                    //             if ($checkInnCount->get($dateKey1, 0) == 2 && $checkOuttCount->get($dateKey2, 0) == 2) {
-                                    //                 if ($firstCheckIn && $firstCheckOut && $secondCheckIn && $secondCheckOut) {
-                                                        
-                                    //                     $checkInTime = new DateTime($firstCheckIn->check_in_time);
-                                    //                     $checkOutTime = new DateTime($firstCheckOut->check_out_time);
-
-                                    //                     $checkInTime2 = Carbon::parse($secondCheckIn->check_in_time);
-                                    //                     $checkOutTime2 = Carbon::parse($secondCheckOut->check_out_time);
-
-                                    //                     if ($checkInTime->format('a') === 'am' && $checkOutTime->format('a') === 'am' 
-                                    //                     && $checkInTime2->format('a') === 'pm' && $checkOutTime2->format('a') === 'am') { 
-                                    //                         $hoursWorkedAM = 0;
-                                    //                     }
-                                    //                 }
-                                    //             } else {
-                                    //                $hoursWorkedAM = 0;
-                                    //             }
-
-                                            
-
-                                    //         // if ($checkInnCount->get($dateKey1, 0) == 1 && $checkOuttCount->get($dateKey2, 0) == 1) {
-                                    //         //     $hoursWorkedAM = 0;
-                                    //         // }
-
-                                    //     }
-                                    // } 
+                                  
 
                                     $hoursWorkedAM = 0; // Default to 0
 
                                     if ($firstCheckIn && $firstCheckOut) {
+                                        
                                         $checkInTime = new DateTime($firstCheckIn->check_in_time);
                                         $checkOutTime = new DateTime($firstCheckOut->check_out_time);
 
                                         // AM session rule: check-in in AM, check-out before 2:00 PM
-                                        if ($checkInTime->format('a') === 'am' && $checkOutTime->format('a') === 'pm') {
+                                        // if ($checkInTime->format('a') === 'am' && $checkOutTime->format('a') === 'pm') {
+                                        if ($checkInTime->format('a') === 'am' && ($checkOutTime->format('a') === 'am' || $checkOutTime->format('a') === 'pm')) {
                                             $amEndTime = new DateTime($dateKey1 . ' 14:00:00');
 
                                             if ($checkOutTime < $amEndTime) {
                                     
                                                 $hoursWorkedAM = $intervalAM->h + ($intervalAM->i / 60) + ($intervalAM->s / 3600);
+                                                
                                             }
                                         }
                                     }
@@ -839,11 +784,7 @@ class ShowEmployeeAttendance extends Component
 
                                 
                                     if ($checkInDateTime > $morningStartTime) {
-                                        // Define the latest allowed check-in time with a 15-minute grace period
-                                        // $latestAllowedCheckInAM = clone $morningStartTime;
-                                        // $latestAllowedCheckInAM->add(new DateInterval('PT15M'));
-                                        // Rounds to nearest integer
-
+                                     
                                         
                                         $gracePeriodMinutes = $gracePeriodValue * 60;
                                         $gracePeriodMinutes = round($gracePeriodMinutes);
@@ -856,16 +797,7 @@ class ShowEmployeeAttendance extends Component
                                         // Check if the check-in time is beyond the 15-minute grace period
                                         if ($checkInDateTime > $latestAllowedCheckInAM ) {
 
-                                            // $intervalAM = $effectiveCheckInTime->diff($effectiveCheckOutTime);
-                                            // $hoursWork = $intervalAM->h + ($intervalAM->i / 60) + ($intervalAM->s / 3600);
-                                            // $intervalAM = $effectiveCheckInTime->diff($effectiveCheckOutTime);
-                                            // $hoursWork = $intervalAM->h + ($intervalAM->i / 60) + ($intervalAM->s / 3600);
-                                            // Calculate the late interval starting from the grace period end
-
-                                            // $intervalAM = $effectiveCheckInTime->diff($effectiveCheckOutTime);
-                                            // // $hoursWorkedAM = $intervalAM->h + ($intervalAM->i / 60);
-                                            // $hoursWorkedAM = $intervalAM->h + ($intervalAM->i / 60) + ($intervalAM->s / 3600);
-                                            
+                                          
 
                                             $lateIntervalAM = $checkInDateTime->diff($latestAllowedCheckInAM);
                                             $lateDurationAM = ($lateIntervalAM->h * 60) + $lateIntervalAM->i + ($lateIntervalAM->s / 60);
@@ -901,21 +833,7 @@ class ShowEmployeeAttendance extends Component
                                             
                                         }
                                             
-                                        // if($checkInDateTime < $latestAllowedCheckInAM)
-                                        // {
-                                            
-                                        //     // $intervalAM = $morningStartTime->diff($effectiveCheckOutTime);
-                                            
-                                        //     // // Convert intervals to total minutes
-                                        //     // $intervalMinutesAM = ($intervalAM->h * 60) + $intervalAM->i + ($intervalAM->s / 60);
-
-                                        //     // // Calculate hours worked in AM
-                                        //     // $hoursWorkedAM = $intervalMinutesAM / 60; // Convert total minutes to hours
-                                        //     // $hoursWorkedAM += 0.25;
-                                        //     // $lateDurationAM = 0;
-                                        //     // $lateAM = 0;
-                                            
-                                        // }
+                                        
                                     } else {
                                         // If check-in is on time or early, set late duration to 0
                                             $lateDurationAM = 0;
@@ -943,23 +861,7 @@ class ShowEmployeeAttendance extends Component
                                     }
 
                                     
-                                    // if($lateDurationAM > 0 && $hoursWorkedAM > $gracePeriodValue){
-                                    //          $hoursWorkedAM += $gracePeriodValue;
-                                    // }
-
-                                    // if ($lateDurationAM > 0 && $hoursWorkedAM == 0.25) {
-                                    //     $hoursWorkedAM -= 0.25;
-                                    //     $lateDurationAM = 0;
-                                    //     $lateAM = 0; // Subtract 0.25 hours (15 minutes) if late
-                                    // }   
-                                    
-                                    // if ($checkInDateTime <= $latestAllowedCheckInAM) {
-                                    //     // Calculate the total hours worked considering the effective check-in time and the morning end time
-                                    //     $effectiveCheckInTime = max($checkInDateTime, $morningStartTime);
-                                    //     $effectiveCheckOutTime = min($checkOutDateTime, $morningEndTime);
-                                    //     $intervalAM = $effectiveCheckInTime->diff($effectiveCheckOutTime);
-                                    //     $hoursWorkedAM = $intervalAM->h + ($intervalAM->i / 60) + ($intervalAM->s / 3600);
-                                    // }
+                                   
 
 
                             }
@@ -1073,74 +975,6 @@ class ShowEmployeeAttendance extends Component
                                     }
                                 }
 
-
-                                // if ($firstCheckIn ){
-
-                                //     if ($firstCheckIn && $firstCheckOut) {
-                                            
-                                //             if ($checkInnCount->get($dateKey1, 0) == 2 && $checkOuttCount->get($dateKey2, 0) == 2) {
-     
-                                //                 if ($secondCheckIn && $secondCheckOut) {
-                                //                     // Convert check-in and check-out times to Carbon instances
-                                //                     $checkInTime = Carbon::parse($secondCheckIn->check_in_time);
-                                //                     $checkOutTime = Carbon::parse($secondCheckOut->check_out_time);
-
-                                //                     // Ensure check-in is PM and check-out is also PM
-                                //                     if ($checkInTime->format('a') === 'pm' && $checkOutTime->format('a') === 'pm') {
-                                //                         $timeStartTimeSecond = Carbon::parse($afternoonStartTime)->format('H:i:s');
-                                //                         $secondTime = Carbon::parse($secondCheckIn->check_in_time)->format('H:i:s');
-                                                        
-                                //                         //dd($afternoonStartTime > $secondTime);
-                                //                         // if($afternoonStartTime > $secondTime){
-                                //                         //     $hoursWorkedPM = 0;
-                                //                         // } else {
-                                //                         $hoursWorkedPM = $intervalPM->h + ($intervalPM->i / 60) + ($intervalPM->s / 3600);
-
-                                //                             // if($afternoonStartTime > $secondTime){
-                                //                         //     $hoursWorkedPM = 0;
-                                //                         // } else {
-                                //                         // }
-                                //                     } else {
-                                //                         $hoursWorkedPM = 0;
-                                //                     }
-                                //                 } else {
-                                //                     $hoursWorkedPM = 0;
-                                //                 }
-                                //             } else {
-                                                
-                                                    
-                                //                 if ($checkInnCount->get($dateKey1, 0) == 2 && $checkOuttCount->get($dateKey2, 0) == 1) {
-                                //                     $hoursWorkedPM = 0;
-                                //                 } 
-                                                
-                                //                 else 
-                                //                 {
-                                //                     if ($firstCheckIn && $firstCheckOut) {
-                                //                         // Convert check-in and check-out times to Carbon instances
-                                //                         $checkInTime = Carbon::parse($firstCheckIn->check_in_time);
-                                //                         $checkOutTime = Carbon::parse($firstCheckOut->check_out_time);
-
-                                //                         // Ensure check-in is PM and check-out is also PM
-                                //                         if ($checkInTime->format('a') === 'am' && $checkOutTime->format('a') === 'pm') {
-                                //                             $hoursWorkedPM = 0;
-                                //                         } else if ($checkInTime->format('a') === 'pm' && $checkOutTime->format('a') === 'am') {
-                                //                             $hoursWorkedPM = 0;
-                                //                         }else {
-                                //                             $hoursWorkedPM = $intervalPM->h + ($intervalPM->i / 60) + ($intervalPM->s / 3600);
-                                //                         }
-                                //                     } 
-                                //                 }
-            
-                                //             }
-
-                                //         } else {
-                                //              $hoursWorkedPM = 0;
-                                //         }
-                                    
-
-                                    
-                                    
-                                // }
 
 
                                  if ($checkInDateTime > $afternoonStartTime) {
